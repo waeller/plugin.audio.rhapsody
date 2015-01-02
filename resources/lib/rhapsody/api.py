@@ -59,9 +59,13 @@ class API:
                 'password': password,
                 'grant_type': 'password'
             }
-            response = requests.post(API.BASE_URL + 'oauth/token', data=data, auth=self._auth)
-            self.token = Token(json.loads(response.text))
-            self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
+            try:
+                response = requests.post(API.BASE_URL + 'oauth/token', data=data, auth=self._auth)
+                self.token = Token(json.loads(response.text))
+                self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
+            except KeyError:
+                raise API.AuthenticationError
+
 
     def logout(self):
         self.token = None
