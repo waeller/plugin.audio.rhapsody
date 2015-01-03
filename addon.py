@@ -73,6 +73,7 @@ def index():
         {'label': 'Charts', 'path': plugin.url_for('toplist')},
         {'label': 'New Releases', 'path': plugin.url_for('albums_new')},
         {'label': 'Staff Picks', 'path': plugin.url_for('albums_picks')},
+        {'label': 'Featured Playlists', 'path': plugin.url_for('playlists_featured')},
         {'label': 'Listening History', 'path': plugin.url_for('recent')},
     ]
 
@@ -83,6 +84,7 @@ def library():
         {'label': 'Artists', 'path': plugin.url_for('artists_library')},
         {'label': 'Albums', 'path': plugin.url_for('albums_library')},
         {'label': 'Tracks', 'path': plugin.url_for('tracks_library')},
+        {'label': 'Playlists', 'path': plugin.url_for('playlists_library')},
     ]
 
 
@@ -172,6 +174,43 @@ def artists_detail(artist_id):
     return items
 
 
+@plugin.route('/playlists/featured')
+def playlists_featured():
+    items = []
+    for playlist in rhapsody.playlists.featured():
+        items.append({'label': playlist.name, 'path': plugin.url_for('playlists_detail', playlist_id=playlist.id)})
+    return items
+
+
+@plugin.route('/playlists/library')
+def playlists_library():
+    items = []
+    for playlist in rhapsody.library.playlists():
+        items.append({
+            'label': playlist.name,
+            'path': plugin.url_for('playlists_library_detail', artist_id=playlist.id)
+        })
+    return items
+
+
+@plugin.route('/playlists/library/<playlist_id>')
+def playlists_library_detail(playlist_id):
+    playlist = rhapsody.library.playlist(playlist_id)
+    items = []
+    for track in playlist.tracks:
+        items.append(get_track_item(track))
+    return items
+
+
+@plugin.route('/playlists/<playlist_id>')
+def playlists_detail(playlist_id):
+    playlist = rhapsody.playlists.detail(playlist_id)
+    items = []
+    for track in playlist.tracks:
+        items.append(get_track_item(track))
+    return items
+
+
 @plugin.route('/albums/top')
 def albums_top():
     items = []
@@ -224,7 +263,7 @@ def albums_library():
 def albums_detail(album_id):
     album = rhapsody.albums.detail(album_id)
     items = []
-    for track in rhapsody.albums.tracks(album_id):
+    for track in album.tracks:
         items.append(get_track_item(track, album))
     return items
 

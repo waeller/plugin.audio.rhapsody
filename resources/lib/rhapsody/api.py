@@ -9,6 +9,7 @@ from rhapsody.models.albums import Albums
 from rhapsody.models.artists import Artists
 from rhapsody.models.genres import Genres
 from rhapsody.models.library import Library
+from rhapsody.models.playlists import Playlists
 from rhapsody.models.search import Search
 from rhapsody.models.streams import Streams
 from rhapsody.models.tracks import Tracks
@@ -42,6 +43,7 @@ class API:
         self.albums = Albums(self)
         self.genres = Genres(self)
         self.library = Library(self)
+        self.playlists = Playlists(self)
         self.search = Search(self)
         self.streams = Streams(self)
         self.tracks = Tracks(self)
