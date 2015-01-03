@@ -57,10 +57,7 @@ class API:
             return False
 
     def login(self, username, password):
-        if self.is_authenticated():
-            if self.token.is_expired():
-                self.refresh_token()
-        else:
+        if not self.is_authenticated() or self.token.username != username:
             data = {
                 'username': username,
                 'password': password,
@@ -72,6 +69,8 @@ class API:
                 self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
             except KeyError:
                 raise API.AuthenticationError
+        elif self.token.is_expired():
+            self.refresh_token()
 
     def logout(self):
         self.token = None

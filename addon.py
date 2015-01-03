@@ -3,10 +3,15 @@ import sys
 
 from xbmcswift2 import Plugin
 
-
 plugin = Plugin()
-_ = plugin.get_string
 sys.path.append(os.path.join(plugin.addon.getAddonInfo('path'), 'resources', 'lib'))
+
+
+def get_string(stringid):
+    return plugin.get_string(stringid).encode('utf-8')
+
+
+_ = get_string
 
 from rhapsody import cache
 from rhapsody.api import API
