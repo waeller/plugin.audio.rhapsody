@@ -315,13 +315,14 @@ def tracks_library():
 def play(track_id):
     add_metadata = plugin.request.args.get('add_metadata', [False])[0]
     stream = rhapsody.streams.detail(track_id)
+    track = rhapsody.tracks.detail(track_id)
+    album = None
     if add_metadata == 'True':
-        track = rhapsody.tracks.detail(track_id)
         album = rhapsody.albums.detail(track.album.id)
-        item = get_track_item(track, album)
-    else:
-        item = dict()
+    item = get_track_item(track, album)
     item['path'] = stream.url
+    started = rhapsody.events.log_playstart(track_id, stream)
+    rhapsody.events.log_playstop(track_id, stream, started, track.duration)
     plugin.set_resolved_url(item)
 
 

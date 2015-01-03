@@ -7,6 +7,7 @@ import requests
 from rhapsody import cache
 from rhapsody.models.albums import Albums
 from rhapsody.models.artists import Artists
+from rhapsody.models.events import Events
 from rhapsody.models.genres import Genres
 from rhapsody.models.library import Library
 from rhapsody.models.playlists import Playlists
@@ -41,6 +42,7 @@ class API:
 
         self.artists = Artists(self)
         self.albums = Albums(self)
+        self.events = Events(self)
         self.genres = Genres(self)
         self.library = Library(self)
         self.playlists = Playlists(self)
@@ -86,6 +88,16 @@ class API:
         response = requests.post(API.BASE_URL + 'oauth/access_token', data=data, auth=self._auth)
         self.token.update_token(json.loads(response.text))
         self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
+
+    def post(self, url, data, headers=None):
+        if headers is None:
+            headers = dict()
+        if self.is_authenticated():
+            if self.token.is_expired():
+                self.refresh_token()
+            headers['Authorization'] = 'Bearer ' + self.token.access_token
+        response = requests.post(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
+        print 'RESPONSE: ' + str(response.text)
 
     def get_json(self, url, params, cache_timeout=DEFAULT_CACHE_TIMEOUT):
         cache_data = {
