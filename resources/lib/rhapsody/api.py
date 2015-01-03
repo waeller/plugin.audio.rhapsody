@@ -9,6 +9,7 @@ from rhapsody.models.albums import Albums
 from rhapsody.models.artists import Artists
 from rhapsody.models.genres import Genres
 from rhapsody.models.library import Library
+from rhapsody.models.search import Search
 from rhapsody.models.streams import Streams
 from rhapsody.models.tracks import Tracks
 from rhapsody.token import Token
@@ -41,6 +42,7 @@ class API:
         self.albums = Albums(self)
         self.genres = Genres(self)
         self.library = Library(self)
+        self.search = Search(self)
         self.streams = Streams(self)
         self.tracks = Tracks(self)
 
@@ -68,7 +70,6 @@ class API:
                 self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
             except KeyError:
                 raise API.AuthenticationError
-
 
     def logout(self):
         self.token = None
@@ -114,14 +115,15 @@ class API:
                 self._cache.set(cache_key, response_text, cache_timeout)
         return response_text
 
-    def get_detail(self, model, obj, obj_id, cache_timeout=None):
-        params = {
-            'apikey': self._key
-        }
+    def get_detail(self, model, obj, obj_id, cache_timeout=None, params=None):
+        if params is None:
+            params = dict()
+        params['apikey'] = self._key
         return model(json.loads(self.get_json(obj + '/' + obj_id, params, cache_timeout)))
 
-    def get_list(self, model, obj, limit=None, offset=None, cache_timeout=None):
-        params = dict()
+    def get_list(self, model, obj, limit=None, offset=None, cache_timeout=None, params=None):
+        if params is None:
+            params = dict()
         params['apikey'] = self._key
         if limit is not None:
             params['limit'] = limit

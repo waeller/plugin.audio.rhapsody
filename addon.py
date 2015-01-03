@@ -65,6 +65,7 @@ def get_track_item(track, album=None):
 def index():
     return [
         {'label': 'Library', 'path': plugin.url_for('library')},
+        {'label': 'Search', 'path': plugin.url_for('search')},
         {'label': 'Top', 'path': plugin.url_for('toplist')},
     ]
 
@@ -76,6 +77,36 @@ def library():
         {'label': 'Albums', 'path': plugin.url_for('albums_library')},
         {'label': 'Tracks', 'path': plugin.url_for('tracks_library')},
     ]
+
+
+@plugin.route('/search')
+def search():
+    query = plugin.keyboard('', 'Search')
+    if query is not None:
+        items = []
+        for result in rhapsody.search.fulltext(query):
+            if result.type == 'artist':
+                artist = result.data
+                items.append({
+                    'label': 'Artist' + ': ' + artist.name,
+                    'path': plugin.url_for('artists_detail', artist_id=artist.id)
+                })
+            if result.type == 'album':
+                album = result.data
+                items.append({
+                    'label': 'Album' + ': ' + album.artist.name + ' - ' + album.name,
+                    'path': plugin.url_for('albums_detail', album_id=album.id),
+                    'thumbnail': album.images[0].url
+                })
+            if result.type == 'track':
+                track = result.data
+                track_item = get_track_item(track)
+                track_item['label'] = 'Track' + ': ' + track.artist.name + ' - ' + track.name
+                items.append(track_item)
+        if len(items) > 0:
+            return items
+        else:
+            plugin.notify('No results found')
 
 
 @plugin.route('/top')
