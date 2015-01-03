@@ -11,4 +11,4 @@ class Detail(object):
 class Streams(MetadataDetail):
     url_base = 'play'
     detail_class = Detail
-    cache_timeout = 600
+    cache_timeout = 300

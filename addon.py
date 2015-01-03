@@ -30,10 +30,14 @@ class Cache(cache.Base):
         storage[key] = value
 
 
-rhapsody = API(plugin.get_setting('api_key'), plugin.get_setting('api_secret'), cache_class=Cache)
+api_key = plugin.get_setting('api_key', converter=unicode)
+api_secret = plugin.get_setting('api_secret', converter=unicode)
+rhapsody = API(api_key, api_secret, cache_class=Cache)
 
 try:
-    rhapsody.login(plugin.get_setting('username'), plugin.get_setting('password'))
+    username = plugin.get_setting('username', converter=unicode)
+    password = plugin.get_setting('password', converter=unicode)
+    rhapsody.login(username, password)
 except rhapsody.AuthenticationError:
     plugin.notify('Login failed. Check your credentials.')
     plugin.open_settings()
@@ -258,8 +262,9 @@ def tracks_library():
     return items
 
 
-@plugin.route('/play/<track_id>/<add_metadata>')
-def play(track_id, add_metadata):
+@plugin.route('/play/<track_id>')
+def play(track_id):
+    add_metadata = plugin.request.args.get('add_metadata', [False])[0]
     stream = rhapsody.streams.detail(track_id)
     if add_metadata == 'True':
         track = rhapsody.tracks.detail(track_id)
