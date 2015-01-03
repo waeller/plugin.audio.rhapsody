@@ -64,9 +64,10 @@ def get_track_item(track, album=None):
 @plugin.route('/')
 def index():
     return [
-        {'label': 'Library', 'path': plugin.url_for('library')},
+        {'label': 'My Library', 'path': plugin.url_for('library')},
         {'label': 'Search', 'path': plugin.url_for('search')},
-        {'label': 'Top', 'path': plugin.url_for('toplist')},
+        {'label': 'Charts', 'path': plugin.url_for('toplist')},
+        {'label': 'Listening History', 'path': plugin.url_for('recent')},
     ]
 
 
@@ -118,10 +119,26 @@ def toplist():
     ]
 
 
+@plugin.route('/recent')
+def recent():
+    return [
+        {'label': 'Artists', 'path': plugin.url_for('artists_recent')},
+        {'label': 'Tracks', 'path': plugin.url_for('tracks_recent')},
+    ]
+
+
 @plugin.route('/artists/top')
 def artists_top():
     items = []
     for artist in rhapsody.artists.top():
+        items.append({'label': artist.name, 'path': plugin.url_for('artists_detail', artist_id=artist.id)})
+    return items
+
+
+@plugin.route('/artists/recent')
+def artists_recent():
+    items = []
+    for artist in rhapsody.library.recent_artists():
         items.append({'label': artist.name, 'path': plugin.url_for('artists_detail', artist_id=artist.id)})
     return items
 
@@ -186,6 +203,17 @@ def albums_detail(album_id):
 def tracks_top():
     items = []
     for track in rhapsody.tracks.top():
+        track_item = get_track_item(track)
+        track_item['label'] = track.artist.name + ' - ' + track.name
+        items.append(track_item)
+    plugin.add_to_playlist(items, playlist='music')
+    return items
+
+
+@plugin.route('/tracks/recent')
+def tracks_recent():
+    items = []
+    for track in rhapsody.library.recent_tracks():
         track_item = get_track_item(track)
         track_item['label'] = track.artist.name + ' - ' + track.name
         items.append(track_item)
