@@ -114,3 +114,19 @@ msgstr "Zuletzt gehörte Künstler"
 msgctxt "#30231"
 msgid "Recent Tracks"
 msgstr "Zuletzt gehörte Titel"
+
+msgctxt "#30240"
+msgid "Search"
+msgstr "Suchen"
+
+msgctxt "#30241"
+msgid "Artist"
+msgstr "Künstler"
+
+msgctxt "#30242"
+msgid "Album"
+msgstr "Album"
+
+msgctxt "#30243"
+msgid "Track"
+msgstr "Titel"

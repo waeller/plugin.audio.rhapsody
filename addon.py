@@ -6,12 +6,7 @@ from xbmcswift2 import Plugin
 plugin = Plugin()
 sys.path.append(os.path.join(plugin.addon.getAddonInfo('path'), 'resources', 'lib'))
 
-
-def get_string(stringid):
-    return plugin.get_string(stringid).encode('utf-8')
-
-
-_ = get_string
+_ = plugin.get_string
 
 from rhapsody import cache
 from rhapsody.api import API
@@ -45,7 +40,7 @@ try:
     password = plugin.get_setting('password', converter=unicode)
     rhapsody.login(username, password)
 except rhapsody.AuthenticationError:
-    plugin.notify(_(30100))
+    plugin.notify(_(30100).encode('utf-8'))
     plugin.open_settings()
     exit()
 
@@ -97,32 +92,32 @@ def library():
 
 @plugin.route('/search')
 def search():
-    query = plugin.keyboard('', 'Search')
+    query = plugin.keyboard('', _(30240))
     if query is not None:
         items = []
         for result in rhapsody.search.fulltext(query):
             if result.type == 'artist':
                 artist = result.data
                 items.append({
-                    'label': 'Artist' + ': ' + artist.name,
+                    'label': _(30241) + ': ' + artist.name,
                     'path': plugin.url_for('artists_detail', artist_id=artist.id)
                 })
             if result.type == 'album':
                 album = result.data
                 items.append({
-                    'label': 'Album' + ': ' + album.artist.name + ' - ' + album.name,
+                    'label': _(30242) + ': ' + album.artist.name + ' - ' + album.name,
                     'path': plugin.url_for('albums_detail', album_id=album.id),
                     'thumbnail': album.images[0].url
                 })
             if result.type == 'track':
                 track = result.data
                 track_item = get_track_item(track)
-                track_item['label'] = 'Track' + ': ' + track.artist.name + ' - ' + track.name
+                track_item['label'] = _(30243) + ': ' + track.artist.name + ' - ' + track.name
                 items.append(track_item)
         if len(items) > 0:
             return items
         else:
-            plugin.notify(_(30101))
+            plugin.notify(_(30101).encode('utf-8'))
 
 
 @plugin.route('/top')

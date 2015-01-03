@@ -114,3 +114,19 @@ msgstr ""
 msgctxt "#30231"
 msgid "Recent Tracks"
 msgstr ""
+
+msgctxt "#30240"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30241"
+msgid "Artist"
+msgstr ""
+
+msgctxt "#30242"
+msgid "Album"
+msgstr ""
+
+msgctxt "#30243"
+msgid "Track"
+msgstr ""
