@@ -8,6 +8,7 @@ from rhapsody import cache
 from rhapsody.models.albums import Albums
 from rhapsody.models.artists import Artists
 from rhapsody.models.genres import Genres
+from rhapsody.models.library import Library
 from rhapsody.models.streams import Streams
 from rhapsody.models.tracks import Tracks
 from rhapsody.token import Token
@@ -17,6 +18,7 @@ class API:
     BASE_URL = 'https://api.rhapsody.com/'
     VERSION = 'v1'
     TOKEN_CACHE_LIFETIME = timedelta(days=30).seconds
+    DEFAULT_CACHE_TIMEOUT = timedelta(hours=2).seconds
 
     class NotAuthenticatedError(Exception):
         pass
@@ -38,6 +40,7 @@ class API:
         self.artists = Artists(self)
         self.albums = Albums(self)
         self.genres = Genres(self)
+        self.library = Library(self)
         self.streams = Streams(self)
         self.tracks = Tracks(self)
 
@@ -82,7 +85,7 @@ class API:
         self.token.update_token(json.loads(response.text))
         self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
 
-    def get_json(self, url, params, cache_timeout=None):
+    def get_json(self, url, params, cache_timeout=DEFAULT_CACHE_TIMEOUT):
         cache_data = {
             'url': url,
             'params': params,
@@ -117,12 +120,13 @@ class API:
         }
         return model(json.loads(self.get_json(obj + '/' + obj_id, params, cache_timeout)))
 
-    def get_list(self, model, obj, limit=0, offset=0, cache_timeout=None):
-        params = {
-            'apikey': self._key,
-            'limit': limit,
-            'offset': offset
-        }
+    def get_list(self, model, obj, limit=None, offset=None, cache_timeout=None):
+        params = dict()
+        params['apikey'] = self._key
+        if limit is not None:
+            params['limit'] = limit
+            if offset is not None:
+                params['offset'] = limit
         items = []
         for item in json.loads(self.get_json(obj, params, cache_timeout)):
             items.append(model(item))

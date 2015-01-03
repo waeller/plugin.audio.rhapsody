@@ -64,7 +64,17 @@ def get_track_item(track, album=None):
 @plugin.route('/')
 def index():
     return [
+        {'label': 'Library', 'path': plugin.url_for('library')},
         {'label': 'Top', 'path': plugin.url_for('toplist')},
+    ]
+
+
+@plugin.route('/library')
+def library():
+    return [
+        {'label': 'Artists', 'path': plugin.url_for('artists_library')},
+        {'label': 'Albums', 'path': plugin.url_for('albums_library')},
+        {'label': 'Tracks', 'path': plugin.url_for('tracks_library')},
     ]
 
 
@@ -81,6 +91,14 @@ def toplist():
 def artists_top():
     items = []
     for artist in rhapsody.artists.top():
+        items.append({'label': artist.name, 'path': plugin.url_for('artists_detail', artist_id=artist.id)})
+    return items
+
+
+@plugin.route('/artists/library')
+def artists_library():
+    items = []
+    for artist in rhapsody.library.artists():
         items.append({'label': artist.name, 'path': plugin.url_for('artists_detail', artist_id=artist.id)})
     return items
 
@@ -109,6 +127,18 @@ def albums_top():
     return items
 
 
+@plugin.route('/albums/library')
+def albums_library():
+    items = []
+    for album in rhapsody.library.albums():
+        items.append({
+            'label': album.artist.name + ' - ' + album.name,
+            'path': plugin.url_for('albums_detail', album_id=album.id),
+            'thumbnail': album.images[0].url
+        })
+    return items
+
+
 @plugin.route('/albums/<album_id>')
 def albums_detail(album_id):
     album = rhapsody.albums.detail(album_id)
@@ -122,6 +152,17 @@ def albums_detail(album_id):
 def tracks_top():
     items = []
     for track in rhapsody.tracks.top():
+        track_item = get_track_item(track)
+        track_item['label'] = track.artist.name + ' - ' + track.name
+        items.append(track_item)
+    plugin.add_to_playlist(items, playlist='music')
+    return items
+
+
+@plugin.route('/tracks/library')
+def tracks_library():
+    items = []
+    for track in rhapsody.library.tracks():
         track_item = get_track_item(track)
         track_item['label'] = track.artist.name + ' - ' + track.name
         items.append(track_item)
