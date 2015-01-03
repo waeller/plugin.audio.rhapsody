@@ -1,3 +1,4 @@
+from datetime import date
 from metadata import *
 
 
@@ -8,13 +9,23 @@ class Base(object):
 
 
 class List(Base):
+    class Type:
+        def __init__(self, data):
+            self.id = data['id']
+            self.name = data['name']
+
     def __init__(self, data):
         import common
         import artists
 
         super(List, self).__init__(data)
         self.artist = artists.List(data['artist'])
+        self.type = List.Type(data['type'])
         self.images = [common.Image(x) for x in data['images']]
+        self.released = data['released']
+        
+    def get_release_date(self):
+        return date.fromtimestamp(self.released / 1000)
 
 
 class Detail(List):

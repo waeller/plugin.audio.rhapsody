@@ -134,12 +134,15 @@ def artists_library():
     return items
 
 
-@plugin.route('/artists/<artist_id>')
+@plugin.route('/artists/<artist_id>/albums')
 def artists_detail(artist_id):
+    types = [0, 1]
+    if not plugin.get_setting('hide_compilations', converter=bool):
+        types.append(2)
     items = []
-    for album in rhapsody.artists.albums(artist_id):
+    for album in filter(lambda x: x.type.id in types, rhapsody.artists.albums(artist_id)):
         items.append({
-            'label': album.name,
+            'label': album.name + ' (' + str(album.get_release_date().year) + ')',
             'path': plugin.url_for('albums_detail', album_id=album.id),
             'thumbnail': album.images[0].url
         })
@@ -151,7 +154,7 @@ def albums_top():
     items = []
     for album in rhapsody.albums.top():
         items.append({
-            'label': album.artist.name + ' - ' + album.name,
+            'label': album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')',
             'path': plugin.url_for('albums_detail', album_id=album.id),
             'thumbnail': album.images[0].url
         })
@@ -163,7 +166,7 @@ def albums_library():
     items = []
     for album in rhapsody.library.albums():
         items.append({
-            'label': album.artist.name + ' - ' + album.name,
+            'label': album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')',
             'path': plugin.url_for('albums_detail', album_id=album.id),
             'thumbnail': album.images[0].url
         })
