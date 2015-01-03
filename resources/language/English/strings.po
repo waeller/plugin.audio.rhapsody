@@ -1,0 +1,116 @@
+msgid ""
+msgstr ""
+
+# Settings
+
+msgctxt "#30000"
+msgid "API"
+msgstr ""
+
+msgctxt "#30001"
+msgid "Consumer Key"
+msgstr ""
+
+msgctxt "#30002"
+msgid "Consumer Secret"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Account"
+msgstr ""
+
+msgctxt "#30011"
+msgid "Username"
+msgstr ""
+
+msgctxt "#30012"
+msgid "Password"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Albums"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Hide compilations"
+msgstr ""
+
+# Messages
+
+msgctxt "#30100"
+msgid "Login failed! Check your credentials"
+msgstr ""
+
+msgctxt "#30101"
+msgid "No results"
+msgstr ""
+
+# Labels
+
+msgctxt "#30200"
+msgid "My Music"
+msgstr ""
+
+msgctxt "#30201"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30202"
+msgid "Charts"
+msgstr ""
+
+msgctxt "#30203"
+msgid "New Releases"
+msgstr ""
+
+msgctxt "#30204"
+msgid "Staff Picks"
+msgstr ""
+
+msgctxt "#30205"
+msgid "Featured Playlists"
+msgstr ""
+
+msgctxt "#30206"
+msgid "Listening History"
+msgstr ""
+
+msgctxt "#30210"
+msgid "Artists"
+msgstr ""
+
+msgctxt "#30211"
+msgid "Albums"
+msgstr ""
+
+msgctxt "#30212"
+msgid "Tracks"
+msgstr ""
+
+msgctxt "#30213"
+msgid "Favorites"
+msgstr ""
+
+msgctxt "#30214"
+msgid "Playlists"
+msgstr ""
+
+msgctxt "#30220"
+msgid "Top Artists"
+msgstr ""
+
+msgctxt "#30221"
+msgid "Top Albums"
+msgstr ""
+
+msgctxt "#30222"
+msgid "Top Tracks"
+msgstr ""
+
+msgctxt "#30230"
+msgid "Recent Artists"
+msgstr ""
+
+msgctxt "#30231"
+msgid "Recent Tracks"
+msgstr ""

@@ -5,6 +5,7 @@ from xbmcswift2 import Plugin
 
 
 plugin = Plugin()
+_ = plugin.get_string
 sys.path.append(os.path.join(plugin.addon.getAddonInfo('path'), 'resources', 'lib'))
 
 from rhapsody import cache
@@ -39,7 +40,7 @@ try:
     password = plugin.get_setting('password', converter=unicode)
     rhapsody.login(username, password)
 except rhapsody.AuthenticationError:
-    plugin.notify('Login failed. Check your credentials.')
+    plugin.notify(_(30100))
     plugin.open_settings()
     exit()
 
@@ -68,24 +69,24 @@ def get_track_item(track, album=None):
 @plugin.route('/')
 def index():
     return [
-        {'label': 'My Library', 'path': plugin.url_for('library')},
-        {'label': 'Search', 'path': plugin.url_for('search')},
-        {'label': 'Charts', 'path': plugin.url_for('toplist')},
-        {'label': 'New Releases', 'path': plugin.url_for('albums_new')},
-        {'label': 'Staff Picks', 'path': plugin.url_for('albums_picks')},
-        {'label': 'Featured Playlists', 'path': plugin.url_for('playlists_featured')},
-        {'label': 'Listening History', 'path': plugin.url_for('recent')},
+        {'label': _(30200), 'path': plugin.url_for('library')},
+        {'label': _(30201), 'path': plugin.url_for('search')},
+        {'label': _(30202), 'path': plugin.url_for('toplist')},
+        {'label': _(30203), 'path': plugin.url_for('albums_new')},
+        {'label': _(30204), 'path': plugin.url_for('albums_picks')},
+        {'label': _(30205), 'path': plugin.url_for('playlists_featured')},
+        {'label': _(30206), 'path': plugin.url_for('recent')},
     ]
 
 
 @plugin.route('/library')
 def library():
     return [
-        {'label': 'Artists', 'path': plugin.url_for('artists_library')},
-        {'label': 'Albums', 'path': plugin.url_for('albums_library')},
-        {'label': 'Tracks', 'path': plugin.url_for('tracks_library')},
-        {'label': 'Favorites', 'path': plugin.url_for('favorites_library')},
-        {'label': 'Playlists', 'path': plugin.url_for('playlists_library')},
+        {'label': _(30210), 'path': plugin.url_for('artists_library')},
+        {'label': _(30211), 'path': plugin.url_for('albums_library')},
+        {'label': _(30212), 'path': plugin.url_for('tracks_library')},
+        {'label': _(30213), 'path': plugin.url_for('favorites_library')},
+        {'label': _(30214), 'path': plugin.url_for('playlists_library')},
     ]
 
 
@@ -116,23 +117,23 @@ def search():
         if len(items) > 0:
             return items
         else:
-            plugin.notify('No results found')
+            plugin.notify(_(30101))
 
 
 @plugin.route('/top')
 def toplist():
     return [
-        {'label': 'Artists', 'path': plugin.url_for('artists_top')},
-        {'label': 'Albums', 'path': plugin.url_for('albums_top')},
-        {'label': 'Tracks', 'path': plugin.url_for('tracks_top')},
+        {'label': _(30220), 'path': plugin.url_for('artists_top')},
+        {'label': _(30221), 'path': plugin.url_for('albums_top')},
+        {'label': _(30222), 'path': plugin.url_for('tracks_top')},
     ]
 
 
 @plugin.route('/recent')
 def recent():
     return [
-        {'label': 'Artists', 'path': plugin.url_for('artists_recent')},
-        {'label': 'Tracks', 'path': plugin.url_for('tracks_recent')},
+        {'label': _(30230), 'path': plugin.url_for('artists_recent')},
+        {'label': _(30231), 'path': plugin.url_for('tracks_recent')},
     ]
 
 
