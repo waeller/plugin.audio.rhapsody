@@ -32,7 +32,12 @@ class Library(object):
 
         return self._api.get_list(playlists.List, 'me/playlists', limit, offset, cache_timeout=None)
 
-    def playlist(self, playlist_id, limit=None, offset=None):
+    def playlist(self, playlist_id):
         from rhapsody.models import playlists
 
-        return self._api.get_detail(playlists.Detail, 'me/playlists/' + playlist_id, limit, offset, cache_timeout=None)
+        return self._api.get_detail(playlists.Detail, 'me/playlists', playlist_id, cache_timeout=None)
+
+    def favorites(self, limit=None, offset=None):
+        from rhapsody.models import tracks
+
+        return self._api.get_list(tracks.Detail, 'me/favorites', limit, offset, cache_timeout=None)

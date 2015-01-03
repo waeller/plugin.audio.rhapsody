@@ -84,6 +84,7 @@ def library():
         {'label': 'Artists', 'path': plugin.url_for('artists_library')},
         {'label': 'Albums', 'path': plugin.url_for('albums_library')},
         {'label': 'Tracks', 'path': plugin.url_for('tracks_library')},
+        {'label': 'Favorites', 'path': plugin.url_for('favorites_library')},
         {'label': 'Playlists', 'path': plugin.url_for('playlists_library')},
     ]
 
@@ -174,6 +175,14 @@ def artists_detail(artist_id):
     return items
 
 
+@plugin.route('/favorites')
+def favorites_library():
+    items = []
+    for track in rhapsody.library.favorites():
+        items.append(get_track_item(track))
+    return items
+
+
 @plugin.route('/playlists/featured')
 def playlists_featured():
     items = []
@@ -188,7 +197,7 @@ def playlists_library():
     for playlist in rhapsody.library.playlists():
         items.append({
             'label': playlist.name,
-            'path': plugin.url_for('playlists_library_detail', artist_id=playlist.id)
+            'path': plugin.url_for('playlists_library_detail', playlist_id=playlist.id)
         })
     return items
 
