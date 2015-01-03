@@ -68,6 +68,7 @@ def index():
         {'label': 'Search', 'path': plugin.url_for('search')},
         {'label': 'Charts', 'path': plugin.url_for('toplist')},
         {'label': 'New Releases', 'path': plugin.url_for('albums_new')},
+        {'label': 'Staff Picks', 'path': plugin.url_for('albums_picks')},
         {'label': 'Listening History', 'path': plugin.url_for('recent')},
     ]
 
@@ -183,6 +184,18 @@ def albums_top():
 def albums_new():
     items = []
     for album in rhapsody.albums.new():
+        items.append({
+            'label': album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')',
+            'path': plugin.url_for('albums_detail', album_id=album.id),
+            'thumbnail': album.images[0].url
+        })
+    return items
+
+
+@plugin.route('/albums/picks')
+def albums_picks():
+    items = []
+    for album in rhapsody.albums.picks():
         items.append({
             'label': album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')',
             'path': plugin.url_for('albums_detail', album_id=album.id),

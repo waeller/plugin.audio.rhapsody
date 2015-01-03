@@ -44,6 +44,9 @@ class Albums(MetadataList, MetadataDetail):
     def new(self):
         return self.list('new')
 
+    def picks(self):
+        return self.list('picks')
+
     def tracks(self, album_id):
         from rhapsody.models import tracks
 
