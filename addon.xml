@@ -9,9 +9,9 @@
         <provides>audio</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">Summary</summary>
-        <description lang="en">Description</description>
-        <disclaimer lang="en">Disclaimer</disclaimer>
+        <summary lang="en">A plugin for Rhapsody/Napster</summary>
+        <description lang="en">A plugin for Rhapsody/Napster</description>
+        <disclaimer/>
         <language>en de</language>
         <platform>all</platform>
         <license/>

@@ -97,7 +97,8 @@ class API:
                 self.refresh_token()
             headers['Authorization'] = 'Bearer ' + self.token.access_token
         response = requests.post(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
-        print 'RESPONSE: ' + str(response.text)
+        #print 'RESPONSE: ' + str(response.text)
+        return response.text
 
     def get_json(self, url, params, cache_timeout=DEFAULT_CACHE_TIMEOUT):
         cache_data = {
@@ -121,7 +122,7 @@ class API:
 
         if response_text is None:
             response = requests.get(API.BASE_URL + API.VERSION + '/' + url, params=params, headers=headers)
-            print response.request.url + ': ' + str(response.status_code) + ' - ' + response.text.encode('utf-8')
+            #print response.request.url + ': ' + str(response.status_code) + ' - ' + response.text.encode('utf-8')
             response_text = response.text
 
             if cache_timeout is not None:
