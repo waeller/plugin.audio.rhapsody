@@ -45,6 +45,18 @@ except rhapsody.AuthenticationError:
     exit()
 
 
+def get_album_item(album, show_artist=True):
+    if show_artist:
+        label = album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')'
+    else:
+        label = album.name + ' (' + str(album.get_release_date().year) + ')'
+    return {
+        'label': label,
+        'path': plugin.url_for('albums_detail', album_id=album.id),
+        'thumbnail': album.images[0].url
+    }
+
+
 def get_track_item(track, album=None):
     item = {
         'label': track.name,
@@ -104,11 +116,9 @@ def search():
                 })
             if result.type == 'album':
                 album = result.data
-                items.append({
-                    'label': _(30242) + ': ' + album.artist.name + ' - ' + album.name,
-                    'path': plugin.url_for('albums_detail', album_id=album.id),
-                    'thumbnail': album.images[0].url
-                })
+                album_item = get_album_item(album)
+                album_item['label'] = _(30242) + ': ' + album.artist.name + ' - ' + album.name
+                items.append(album_item)
             if result.type == 'track':
                 track = result.data
                 track_item = get_track_item(track)
@@ -168,11 +178,7 @@ def artists_detail(artist_id):
         types.append(2)
     items = []
     for album in filter(lambda x: x.type.id in types, rhapsody.artists.albums(artist_id)):
-        items.append({
-            'label': album.name + ' (' + str(album.get_release_date().year) + ')',
-            'path': plugin.url_for('albums_detail', album_id=album.id),
-            'thumbnail': album.images[0].url
-        })
+        items.append(get_album_item(album, show_artist=False))
     return items
 
 
@@ -225,11 +231,7 @@ def playlists_detail(playlist_id):
 def albums_top():
     items = []
     for album in rhapsody.albums.top():
-        items.append({
-            'label': album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')',
-            'path': plugin.url_for('albums_detail', album_id=album.id),
-            'thumbnail': album.images[0].url
-        })
+        items.append(get_album_item(album))
     return items
 
 
@@ -237,11 +239,7 @@ def albums_top():
 def albums_new():
     items = []
     for album in rhapsody.albums.new():
-        items.append({
-            'label': album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')',
-            'path': plugin.url_for('albums_detail', album_id=album.id),
-            'thumbnail': album.images[0].url
-        })
+        items.append(get_album_item(album))
     return items
 
 
@@ -249,11 +247,7 @@ def albums_new():
 def albums_picks():
     items = []
     for album in rhapsody.albums.picks():
-        items.append({
-            'label': album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')',
-            'path': plugin.url_for('albums_detail', album_id=album.id),
-            'thumbnail': album.images[0].url
-        })
+        items.append(get_album_item(album))
     return items
 
 
@@ -261,11 +255,7 @@ def albums_picks():
 def albums_library():
     items = []
     for album in rhapsody.library.albums():
-        items.append({
-            'label': album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')',
-            'path': plugin.url_for('albums_detail', album_id=album.id),
-            'thumbnail': album.images[0].url
-        })
+        items.append(get_album_item(album))
     return items
 
 
