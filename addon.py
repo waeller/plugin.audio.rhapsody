@@ -1,7 +1,6 @@
 from multiprocessing.pool import ThreadPool
 import os
 import sys
-from threading import Thread
 
 from xbmcswift2 import Plugin
 
