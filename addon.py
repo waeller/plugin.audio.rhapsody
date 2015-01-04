@@ -2,7 +2,7 @@ from multiprocessing.pool import ThreadPool
 import os
 import sys
 
-from xbmcswift2 import Plugin
+from xbmcswift2 import Plugin, actions
 
 plugin = Plugin()
 sys.path.append(os.path.join(plugin.addon.getAddonInfo('path'), 'resources', 'lib'))
@@ -43,7 +43,7 @@ def library():
 @plugin.route('/search')
 def search():
     query = plugin.keyboard(cache.get('last_search', ''), _(30240))
-    if query is not None:
+    if query is not None and len(query) > 0:
         cache['last_search'] = query
         items = []
         for result in rhapsody.search.fulltext(query):
@@ -170,22 +170,72 @@ def playlists_featured():
 
 @plugin.route('/playlists/library')
 def playlists_library():
-    items = []
+    items = [{
+             'label': _(30250),
+             'path': plugin.url_for('playlists_library_add')}]
     for playlist in rhapsody.library.playlists():
         items.append({
             'label': playlist.name,
-            'path': plugin.url_for('playlists_library_detail', playlist_id=playlist.id)
+            'path': plugin.url_for('playlists_library_detail', playlist_id=playlist.id),
+            'context_menu': [
+                (
+                    _(30251),
+                    actions.update_view(plugin.url_for('playlists_library_rename', playlist_id=playlist.id))
+                ),
+                (
+                    _(30252),
+                    actions.update_view(plugin.url_for('playlists_library_remove', playlist_id=playlist.id))
+                )
+            ]
         })
     return items
 
 
-@plugin.route('/playlists/library/<playlist_id>')
+@plugin.route('/playlists/library/add')
+def playlists_library_add():
+    name = plugin.keyboard('')
+    if name is not None and len(name) > 0:
+        rhapsody.library.add_playlist(name)
+        helpers.refresh_playlists()
+    return plugin.finish(playlists_library(), update_listing=True)
+
+
+@plugin.route('/playlists/library/<playlist_id>/rename')
+def playlists_library_rename(playlist_id):
+    name = plugin.keyboard('')
+    if name is not None and len(name) > 0:
+        rhapsody.library.rename_playlist(playlist_id, name)
+        helpers.refresh_playlists()
+    helpers.refresh_playlists()
+    return plugin.finish(playlists_library(), update_listing=True)
+
+
+@plugin.route('/playlists/library/<playlist_id>/remove')
+def playlists_library_remove(playlist_id):
+    rhapsody.library.remove_playlist(playlist_id)
+    helpers.refresh_playlists()
+    return plugin.finish(playlists_library(), update_listing=True)
+
+
+@plugin.route('/playlists/library/<playlist_id>/detail')
 def playlists_library_detail(playlist_id):
     playlist = rhapsody.library.playlist(playlist_id)
     items = []
     for track in playlist.tracks:
-        items.append(helpers.get_track_item(track))
+        items.append(helpers.get_track_item(track, in_playlists=True, playlist_id=playlist_id))
     return items
+
+
+@plugin.route('/playlists/library/<playlist_id>/add/<track_id>')
+def playlists_library_add_track(playlist_id, track_id):
+    rhapsody.library.add_track_to_playlist(track_id, playlist_id)
+    plugin.notify(_(30102))
+
+
+@plugin.route('/playlists/library/<playlist_id>/remove/<track_id>')
+def playlists_library_remove_track(playlist_id, track_id):
+    rhapsody.library.remove_track_from_playlist(track_id, playlist_id)
+    return plugin.finish(playlists_library_detail(playlist_id), update_listing=True)
 
 
 @plugin.route('/playlists/<playlist_id>')

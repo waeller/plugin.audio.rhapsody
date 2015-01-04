@@ -150,3 +150,23 @@ msgstr "Album"
 msgctxt "#30243"
 msgid "Track"
 msgstr "Titel"
+
+msgctxt "#30250"
+msgid "Create playlist"
+msgstr "Wiedergabeliste erstellen"
+
+msgctxt "#30251"
+msgid "Rename playlist"
+msgstr "Wiedergabeliste umbennen"
+
+msgctxt "#30252"
+msgid "Remove playlist"
+msgstr "Wiedergabeliste löschen"
+
+msgctxt "#30253"
+msgid "Add to playlist {0:s}"
+msgstr "Zu Wiedergabeliste {0:s} hinzufügen"
+
+msgctxt "#30254"
+msgid "Remove from playlist"
+msgstr "Aus Wiedergabelisten entfernen"

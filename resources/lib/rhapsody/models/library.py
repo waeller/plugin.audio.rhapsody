@@ -1,5 +1,4 @@
 import json
-from sets import Set
 
 
 class Library(object):
@@ -35,7 +34,7 @@ class Library(object):
 
     def album_tracks(self, album_id):
         album = self._api.albums.detail(album_id)
-        artist_tracks = Set([x.id for x in self.artist_tracks(album.artist.id)])
+        artist_tracks = [x.id for x in self.artist_tracks(album.artist.id)]
         tracks = []
         for track in album.tracks:
             if track.id in artist_tracks:
@@ -73,26 +72,53 @@ class Library(object):
                 self.add_album(album.id)
 
     def remove_artist(self, artist_id):
-        for track in self.artist_tracks(artist_id):
-            self.remove_track(track.id)
+        for album in self.artist_albums(artist_id):
+            self.remove_album(album.id)
 
     def add_album(self, album_id):
         data = {'id': album_id}
         self._api.post('me/library/albums', json.dumps(data), headers={'Content-Type': 'application/json'})
 
     def remove_album(self, album_id):
-        print self._api.delete('me/library/albums/' + album_id)
+        self._api.delete('me/library/albums/' + album_id)
 
     def add_track(self, track_id):
         data = {'id': track_id}
         self._api.post('me/library/tracks', json.dumps(data), headers={'Content-Type': 'application/json'})
 
     def remove_track(self, track_id):
-        print self._api.delete('me/library/tracks/' + track_id)
+        self._api.delete('me/library/tracks/' + track_id)
 
     def add_favorite(self, track_id):
         data = {'favorites': [{'id': track_id}]}
-        print self._api.put('me/favorites', json.dumps(data), headers={'Content-Type': 'application/json'})
+        self._api.put('me/favorites', json.dumps(data), headers={'Content-Type': 'application/json'})
 
     def remove_favorite(self, track_id):
-        print self._api.delete('me/favorites/' + track_id)
+        self._api.delete('me/favorites/' + track_id)
+
+    def add_playlist(self, playlist_name):
+        data = {'name': playlist_name}
+        self._api.post('me/playlists', json.dumps(data), headers={'Content-Type': 'application/json'})
+
+    def rename_playlist(self, playlist_id, playlist_name):
+        data = {'name': playlist_name}
+        self._api.put('me/playlists/' + playlist_id, json.dumps(data), headers={'Content-Type': 'application/json'})
+
+    def remove_playlist(self, playlist_id):
+        self._api.delete('me/playlists/' + playlist_id)
+
+    def add_track_to_playlist(self, track_id, playlist_id):
+        data = {'id': track_id}
+        self._api.post('me/playlists/' + playlist_id + '/tracks', json.dumps(data),
+                       headers={'Content-Type': 'application/json'})
+
+    def remove_track_from_playlist(self, track_id, playlist_id):
+        playlist = self.playlist(playlist_id)
+        track_ids = [x.id for x in playlist.tracks]
+        if track_id in track_ids:
+            track_ids.remove(track_id)
+        data = {'id': [x for x in track_ids]}
+        # TODO: This call sometimes fails silently so we simply call it 3 times. Definitely needs a better solution
+        for x in range(3):
+            self._api.put('me/playlists/' + playlist_id + '/tracks', json.dumps(data),
+                           headers={'Content-Type': 'application/json'})

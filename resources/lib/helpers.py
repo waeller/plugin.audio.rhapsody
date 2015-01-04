@@ -25,6 +25,8 @@ class Helpers:
 
     def __init__(self, plugin):
         self._plugin = plugin
+        self._cache = plugin.get_storage('helpers', TTL=5)
+        self._api = self._get_api()
 
     def get_artist_item(self, artist, in_library=False):
         item = {
@@ -65,7 +67,8 @@ class Helpers:
                 actions.background(self._plugin.url_for('albums_library_add', album_id=album.id))))
         return item
 
-    def get_track_item(self, track, album=None, show_artist=True, in_library=False, in_favorites=False):
+    def get_track_item(self, track, album=None, show_artist=True, in_library=False, in_favorites=False,
+                       in_playlists=False, playlist_id=None):
         if show_artist:
             label = track.artist.name + ' - ' + track.name
         else:
@@ -97,6 +100,21 @@ class Helpers:
             item['context_menu'].append((
                 self._plugin.get_string(30216),
                 actions.background(self._plugin.url_for('favorites_add', track_id=track.id))))
+        if in_playlists:
+            item['context_menu'].append((
+                self._plugin.get_string(30254),
+                actions.update_view(self._plugin.url_for('playlists_library_remove_track',
+                                                         track_id=track.id, playlist_id=playlist_id))))
+        else:
+            playlists = self._cache.get('playlists', None)
+            if playlists is None:
+                playlists = self._api.library.playlists()
+                self._cache['playlists'] = playlists
+            for playlist in playlists:
+                item['context_menu'].append((
+                    self._plugin.get_string(30253).format(playlist.name),
+                    actions.background(self._plugin.url_for('playlists_library_add_track',
+                                                            track_id=track.id, playlist_id=playlist.id))))
         if album is None:
             thumbnail_missing = True
         else:
@@ -111,7 +129,11 @@ class Helpers:
             thumbnail_missing=thumbnail_missing)
         return item
 
-    def get_api(self):
+    def refresh_playlists(self):
+        playlists = self._api.library.playlists()
+        self._cache['playlists'] = playlists
+
+    def _get_api(self):
         api_key = self._plugin.get_setting('api_key', converter=unicode)
         api_secret = self._plugin.get_setting('api_secret', converter=unicode)
         rhapsody = API(api_key, api_secret, cache_instance=Helpers.Cache(self._plugin))
@@ -126,3 +148,6 @@ class Helpers:
             exit()
 
         return rhapsody
+
+    def get_api(self):
+        return self._api
