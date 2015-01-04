@@ -89,15 +89,33 @@ class API:
         self.token.update_token(json.loads(response.text))
         self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
 
-    def post(self, url, data, headers=None):
+    def _get_headers(self, headers=None):
         if headers is None:
             headers = dict()
         if self.is_authenticated():
             if self.token.is_expired():
                 self.refresh_token()
             headers['Authorization'] = 'Bearer ' + self.token.access_token
+        return headers
+
+    def get(self, url, params, headers=None):
+        headers = self._get_headers(headers)
+        response = requests.get(API.BASE_URL + API.VERSION + '/' + url, params=params, headers=headers)
+        return response.text
+
+    def post(self, url, data, headers=None):
+        headers = self._get_headers(headers)
         response = requests.post(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
-        #print 'RESPONSE: ' + str(response.text)
+        return response.text
+
+    def put(self, url, data, headers=None):
+        headers = self._get_headers(headers)
+        response = requests.put(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
+        return response.text
+
+    def delete(self, url, headers=None):
+        headers = self._get_headers(headers)
+        response = requests.delete(API.BASE_URL + API.VERSION + '/' + url, headers=headers)
         return response.text
 
     def get_json(self, url, params, cache_timeout=DEFAULT_CACHE_TIMEOUT):
@@ -106,12 +124,11 @@ class API:
             'params': params,
             'user': ''
         }
-        headers = dict()
+
         if self.is_authenticated():
             if self.token.is_expired():
                 self.refresh_token()
             params['catalog'] = self.token.catalog
-            headers['Authorization'] = 'Bearer ' + self.token.access_token
             cache_data['user'] = self.token.username
 
         cache_key = hashlib.sha1(json.dumps(cache_data)).hexdigest()
@@ -121,12 +138,10 @@ class API:
             response_text = self._cache.get(cache_key, cache_timeout)
 
         if response_text is None:
-            response = requests.get(API.BASE_URL + API.VERSION + '/' + url, params=params, headers=headers)
-            #print response.request.url + ': ' + str(response.status_code) + ' - ' + response.text.encode('utf-8')
-            response_text = response.text
-
+            response_text = self.get(url, params=params, headers=self._get_headers())
             if cache_timeout is not None:
                 self._cache.set(cache_key, response_text, cache_timeout)
+
         return response_text
 
     def get_detail(self, model, obj, obj_id, cache_timeout=None, params=None):

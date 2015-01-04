@@ -49,19 +49,18 @@ def search():
         for result in rhapsody.search.fulltext(query):
             if result.type == 'artist':
                 artist = result.data
-                items.append({
-                    'label': _(30241) + ': ' + artist.name,
-                    'path': plugin.url_for('artists_detail', artist_id=artist.id)
-                })
+                artist_item = helpers.get_artist_item(artist)
+                artist_item['label'] = _(30241) + ': ' + artist_item['label']
+                items.append(artist_item)
             if result.type == 'album':
                 album = result.data
                 album_item = helpers.get_album_item(album)
-                album_item['label'] = _(30242) + ': ' + album.artist.name + ' - ' + album.name
+                album_item['label'] = _(30242) + ': ' + album_item['label']
                 items.append(album_item)
             if result.type == 'track':
                 track = result.data
                 track_item = helpers.get_track_item(track)
-                track_item['label'] = _(30243) + ': ' + track.artist.name + ' - ' + track.name
+                track_item['label'] = _(30243) + ': ' + track_item['label']
                 items.append(track_item)
         if len(items) > 0:
             return items
@@ -90,7 +89,7 @@ def recent():
 def artists_top():
     items = []
     for artist in rhapsody.artists.top():
-        items.append({'label': artist.name, 'path': plugin.url_for('artists_detail', artist_id=artist.id)})
+        items.append(helpers.get_artist_item(artist))
     return items
 
 
@@ -98,7 +97,7 @@ def artists_top():
 def artists_recent():
     items = []
     for artist in rhapsody.library.recent_artists():
-        items.append({'label': artist.name, 'path': plugin.url_for('artists_detail', artist_id=artist.id)})
+        items.append(helpers.get_artist_item(artist))
     return items
 
 
@@ -106,8 +105,20 @@ def artists_recent():
 def artists_library():
     items = []
     for artist in rhapsody.library.artists():
-        items.append({'label': artist.name, 'path': plugin.url_for('artists_detail', artist_id=artist.id)})
+        items.append(helpers.get_artist_item(artist, in_library=True))
     return items
+
+
+@plugin.route('/artists/library/<artist_id>/add')
+def artists_library_add(artist_id):
+    rhapsody.library.add_artist(artist_id)
+    plugin.notify(_(30102))
+
+
+@plugin.route('/artists/library/<artist_id>/remove')
+def artists_library_remove(artist_id):
+    rhapsody.library.remove_artist(artist_id)
+    return plugin.finish(artists_library(), update_listing=True)
 
 
 @plugin.route('/artists/<artist_id>/albums')
@@ -121,11 +132,23 @@ def artists_detail(artist_id):
     return items
 
 
+@plugin.route('/favorites/<track_id>/add')
+def favorites_add(track_id):
+    rhapsody.library.add_favorite(track_id)
+    plugin.notify(_(30102))
+
+
+@plugin.route('/favorites/<track_id>/remove')
+def favorites_remove(track_id):
+    rhapsody.library.remove_favorite(track_id)
+    return plugin.finish(favorites_library(), update_listing=True)
+
+
 @plugin.route('/favorites')
 def favorites_library():
     items = []
     for track in rhapsody.library.favorites():
-        items.append(helpers.get_track_item(track))
+        items.append(helpers.get_track_item(track, in_favorites=True))
     return items
 
 
@@ -194,8 +217,20 @@ def albums_picks():
 def albums_library():
     items = []
     for album in rhapsody.library.albums():
-        items.append(helpers.get_album_item(album))
+        items.append(helpers.get_album_item(album, in_library=True))
     return items
+
+
+@plugin.route('/albums/library/<album_id>/add')
+def albums_library_add(album_id):
+    rhapsody.library.add_album(album_id)
+    plugin.notify(_(30102))
+
+
+@plugin.route('/albums/library/<album_id>/remove')
+def albums_library_remove(album_id):
+    rhapsody.library.remove_album(album_id)
+    return plugin.finish(albums_library(), update_listing=True)
 
 
 @plugin.route('/albums/<album_id>')
@@ -203,7 +238,7 @@ def albums_detail(album_id):
     album = rhapsody.albums.detail(album_id)
     items = []
     for track in album.tracks:
-        items.append(helpers.get_track_item(track, album))
+        items.append(helpers.get_track_item(track, album, show_artist=False))
     return items
 
 
@@ -233,11 +268,23 @@ def tracks_recent():
 def tracks_library():
     items = []
     for track in rhapsody.library.tracks():
-        track_item = helpers.get_track_item(track)
+        track_item = helpers.get_track_item(track, in_library=True)
         track_item['label'] = track.artist.name + ' - ' + track.name
         items.append(track_item)
     plugin.add_to_playlist(items, playlist='music')
     return items
+
+
+@plugin.route('/tracks/library/<track_id>/add')
+def tracks_library_add(track_id):
+    rhapsody.library.add_track(track_id)
+    plugin.notify(_(30102))
+
+
+@plugin.route('/tracks/library/<track_id>/remove')
+def tracks_library_remove(track_id):
+    rhapsody.library.remove_track(track_id)
+    return plugin.finish(tracks_library(), update_listing=True)
 
 
 @plugin.route('/play/<track_id>')

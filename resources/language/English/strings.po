@@ -45,6 +45,10 @@ msgctxt "#30101"
 msgid "No results"
 msgstr ""
 
+msgctxt "#30102"
+msgid "OK"
+msgstr ""
+
 # Labels
 
 msgctxt "#30200"
@@ -76,23 +80,39 @@ msgid "Listening History"
 msgstr ""
 
 msgctxt "#30210"
-msgid "Artists"
+msgid "My Artists"
 msgstr ""
 
 msgctxt "#30211"
-msgid "Albums"
+msgid "My Albums"
 msgstr ""
 
 msgctxt "#30212"
-msgid "Tracks"
+msgid "My Tracks"
 msgstr ""
 
 msgctxt "#30213"
-msgid "Favorites"
+msgid "My Favorites"
 msgstr ""
 
 msgctxt "#30214"
-msgid "Playlists"
+msgid "My Playlists"
+msgstr ""
+
+msgctxt "#30215"
+msgid "Add to \"My Music\""
+msgstr ""
+
+msgctxt "#30216"
+msgid "Add to \"My Favorites\""
+msgstr ""
+
+msgctxt "#30217"
+msgid "Remove from \"My Music\""
+msgstr ""
+
+msgctxt "#30218"
+msgid "Remove from \"My Favorites\""
 msgstr ""
 
 msgctxt "#30220"

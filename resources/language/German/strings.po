@@ -45,6 +45,10 @@ msgctxt "#30101"
 msgid "No results"
 msgstr "Keine Ergebnisse"
 
+msgctxt "#30102"
+msgid "OK"
+msgstr "OK"
+
 # Labels
 
 msgctxt "#30200"
@@ -76,24 +80,40 @@ msgid "Listening History"
 msgstr "Zuletzt gehört"
 
 msgctxt "#30210"
-msgid "Artists"
-msgstr "Künstler"
+msgid "My Artists"
+msgstr "Meine Künstler"
 
 msgctxt "#30211"
-msgid "Albums"
-msgstr "Alben"
+msgid "My Albums"
+msgstr "Meine Alben"
 
 msgctxt "#30212"
-msgid "Tracks"
-msgstr "Titel"
+msgid "My Tracks"
+msgstr "Meine Titel"
 
 msgctxt "#30213"
-msgid "Favorites"
-msgstr "Favoriten"
+msgid "My Favorites"
+msgstr "Meine Favoriten"
 
 msgctxt "#30214"
-msgid "Playlists"
-msgstr "Wiedergabelisten"
+msgid "My Playlists"
+msgstr "Meine Wiedergabelisten"
+
+msgctxt "#30215"
+msgid "Add to \"My Music\""
+msgstr "Zu \"Meine Musik\" hinzufügen"
+
+msgctxt "#30216"
+msgid "Add to \"My Favorites\""
+msgstr "Zu \"Meine Favoriten\" hinzufügen"
+
+msgctxt "#30217"
+msgid "Remove from \"My Music\""
+msgstr "Aus \"Meine Musik\" entfernen"
+
+msgctxt "#30218"
+msgid "Remove from \"My Favorites\""
+msgstr "Aus \"Meine Favoriten\" entfernen"
 
 msgctxt "#30220"
 msgid "Top Artists"

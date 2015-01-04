@@ -1,3 +1,4 @@
+from xbmcswift2 import actions
 from rhapsody.api import API
 from rhapsody.cache import Base as BaseCache
 
@@ -25,28 +26,75 @@ class Helpers:
     def __init__(self, plugin):
         self._plugin = plugin
 
-    def get_album_item(self, album, show_artist=True):
+    def get_artist_item(self, artist, in_library=False):
+        item = {
+            'label': artist.name,
+            'path': self._plugin.url_for('artists_detail', artist_id=artist.id),
+            'context_menu': []
+        }
+        if in_library:
+            item['context_menu'].append((
+                self._plugin.get_string(30217),
+                actions.update_view(self._plugin.url_for('artists_library_remove', artist_id=artist.id))))
+        else:
+            item['context_menu'].append((
+                self._plugin.get_string(30215),
+                actions.background(self._plugin.url_for('artists_library_add', artist_id=artist.id))))
+        return item
+
+    def get_album_item(self, album, show_artist=True, in_library=False):
         if show_artist:
             label = album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')'
         else:
             label = album.name + ' (' + str(album.get_release_date().year) + ')'
-        return {
+        item = {
             'label': label,
             'path': self._plugin.url_for('albums_detail', album_id=album.id),
-            'thumbnail': album.images[0].url
+            'thumbnail': album.images[0].url,
+            'context_menu': []
         }
+        if in_library:
+            item['context_menu'].append((
+                self._plugin.get_string(30217),
+                actions.update_view(self._plugin.url_for('albums_library_remove', album_id=album.id))))
+        else:
+            item['context_menu'].append((
+                self._plugin.get_string(30215),
+                actions.background(self._plugin.url_for('albums_library_add', album_id=album.id))))
+        return item
 
-    def get_track_item(self, track, album=None):
+    def get_track_item(self, track, album=None, show_artist=True, in_library=False, in_favorites=False):
+        if show_artist:
+            label = track.artist.name + ' - ' + track.name
+        else:
+            label = track.name
         item = {
-            'label': track.name,
+            'label': label,
             'is_playable': True,
             'info': {
                 'title': track.name,
                 'artist': track.artist.name,
                 'album': track.album.name,
                 'duration': track.duration
-            }
+            },
+            'context_menu': []
         }
+        if in_library:
+            item['context_menu'].append((
+                self._plugin.get_string(30217),
+                actions.update_view(self._plugin.url_for('tracks_library_remove', track_id=track.id))))
+        else:
+            item['context_menu'].append((
+                self._plugin.get_string(30215),
+                actions.background(self._plugin.url_for('tracks_library_add', track_id=track.id))))
+        if in_favorites:
+            item['context_menu'].append((
+                self._plugin.get_string(30218),
+                actions.update_view(self._plugin.url_for('favorites_remove', track_id=track.id))))
+        else:
+            item['context_menu'].append((
+                self._plugin.get_string(30216),
+                actions.background(self._plugin.url_for('favorites_add', track_id=track.id))))
         if album is None:
             thumbnail_missing = True
         else:
@@ -71,7 +119,7 @@ class Helpers:
             password = self._plugin.get_setting('password', converter=unicode)
             rhapsody.login(username, password)
         except rhapsody.AuthenticationError:
-            self._plugin.notify(_(30100).encode('utf-8'))
+            self._plugin.notify(self._plugin.get_string(30100).encode('utf-8'))
             self._plugin.open_settings()
             exit()
 
