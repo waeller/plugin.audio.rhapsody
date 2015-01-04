@@ -1,5 +1,7 @@
+from multiprocessing.pool import ThreadPool
 import os
 import sys
+from threading import Thread
 
 from xbmcswift2 import Plugin
 
@@ -303,17 +305,27 @@ def tracks_library():
 
 @plugin.route('/play/<track_id>')
 def play(track_id):
+    pool = ThreadPool(processes=2)
+
+    stream_result = pool.apply_async(lambda: rhapsody.streams.detail(track_id))
+    track_result = pool.apply_async(lambda: rhapsody.tracks.detail(track_id))
+
+    track = track_result.get()
+
     add_metadata = plugin.request.args.get('add_metadata', [False])[0]
-    stream = rhapsody.streams.detail(track_id)
-    track = rhapsody.tracks.detail(track_id)
-    album = None
     if add_metadata == 'True':
         album = rhapsody.albums.detail(track.album.id)
+    else:
+        album = None
+
     item = get_track_item(track, album)
+
+    stream = stream_result.get()
     item['path'] = stream.url
-    started = rhapsody.events.log_playstart(track_id, stream)
-    rhapsody.events.log_playstop(track_id, stream, started, track.duration)
     plugin.set_resolved_url(item)
+
+    started = rhapsody.events.log_playstart(track.id, stream)
+    rhapsody.events.log_playstop(track.id, stream, started, track.duration)
 
 
 if __name__ == '__main__':
