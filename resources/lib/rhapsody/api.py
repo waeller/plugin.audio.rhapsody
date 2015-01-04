@@ -32,10 +32,10 @@ class API:
     instance = None
     token = Token
 
-    def __init__(self, key, secret, cache_class=cache.Dummy):
+    def __init__(self, key, secret, cache_instance=cache.Dummy()):
         API.instance = self
 
-        self._cache = cache_class()
+        self._cache = cache_instance
         self._auth = (key, secret)
         self._key = key
         self._secret = secret
