@@ -70,12 +70,17 @@ def get_track_item(track, album=None):
         }
     }
     if album is None:
-        needs_metadata = True
+        thumbnail_missing = True
     else:
-        needs_metadata = False
+        thumbnail_missing = False
         item['thumbnail'] = album.images[0].url
-        item['info']['tracknumber'] = [i for i, j in enumerate(album.tracks) if j.id == track.id][0] + 1
-    item['path'] = plugin.url_for('play', track_id=track.id, add_metadata=needs_metadata)
+        #item['info']['tracknumber'] = [i for i, j in enumerate(album.tracks) if j.id == track.id][0] + 1
+    item['path'] = plugin.url_for(
+        'play',
+        track_id=track.id,
+        album_id=track.album.id,
+        duration=track.duration,
+        thumbnail_missing=thumbnail_missing)
     return item
 
 
@@ -304,27 +309,29 @@ def tracks_library():
 
 @plugin.route('/play/<track_id>')
 def play(track_id):
+    album_id = plugin.request.args.get('album_id', [False])[0]
+    duration = plugin.request.args.get('duration', [False])[0]
+    thumbnail_missing = plugin.request.args.get('thumbnail_missing', [False])[0]
+
+    item = dict()
     pool = ThreadPool(processes=2)
 
     stream_result = pool.apply_async(lambda: rhapsody.streams.detail(track_id))
-    track_result = pool.apply_async(lambda: rhapsody.tracks.detail(track_id))
 
-    track = track_result.get()
-
-    add_metadata = plugin.request.args.get('add_metadata', [False])[0]
-    if add_metadata == 'True':
-        album = rhapsody.albums.detail(track.album.id)
-    else:
-        album = None
-
-    item = get_track_item(track, album)
+    if thumbnail_missing:
+        album_result = pool.apply_async(lambda: rhapsody.albums.detail(album_id))
+        album = album_result.get()
+        item['thumbnail'] = album.images[0].url
 
     stream = stream_result.get()
     item['path'] = stream.url
     plugin.set_resolved_url(item)
 
-    started = rhapsody.events.log_playstart(track.id, stream)
-    rhapsody.events.log_playstop(track.id, stream, started, track.duration)
+    started = rhapsody.events.log_playstart(track_id, stream)
+    rhapsody.events.log_playstop(track_id, stream, started, duration)
+
+    pool.close()
+    pool.join()
 
 
 if __name__ == '__main__':
