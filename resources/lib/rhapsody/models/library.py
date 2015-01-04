@@ -1,4 +1,5 @@
 import json
+from sets import Set
 
 
 class Library(object):
@@ -20,11 +21,26 @@ class Library(object):
 
         return self._api.get_list(tracks.List, 'me/library/tracks', limit, offset, cache_timeout=None)
 
+    def artist_albums(self, artist_id, limit=None, offset=None):
+        from rhapsody.models import albums
+
+        return self._api.get_list(albums.List, 'me/library/artists/' + artist_id + '/albums', limit, offset,
+                                  cache_timeout=None)
+
     def artist_tracks(self, artist_id, limit=None, offset=None):
         from rhapsody.models import tracks
 
         return self._api.get_list(tracks.List, 'me/library/artists/' + artist_id + '/tracks', limit, offset,
                                   cache_timeout=None)
+
+    def album_tracks(self, album_id):
+        album = self._api.albums.detail(album_id)
+        artist_tracks = Set([x.id for x in self.artist_tracks(album.artist.id)])
+        tracks = []
+        for track in album.tracks:
+            if track.id in artist_tracks:
+                tracks.append(track)
+        return tracks
 
     def recent_artists(self, limit=None, offset=None):
         from rhapsody.models import artists

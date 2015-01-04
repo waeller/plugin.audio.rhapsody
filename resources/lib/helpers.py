@@ -29,14 +29,15 @@ class Helpers:
     def get_artist_item(self, artist, in_library=False):
         item = {
             'label': artist.name,
-            'path': self._plugin.url_for('artists_detail', artist_id=artist.id),
             'context_menu': []
         }
         if in_library:
+            item['path'] = self._plugin.url_for('artists_library_albums', artist_id=artist.id)
             item['context_menu'].append((
                 self._plugin.get_string(30217),
                 actions.update_view(self._plugin.url_for('artists_library_remove', artist_id=artist.id))))
         else:
+            item['path'] = self._plugin.url_for('artists_detail', artist_id=artist.id)
             item['context_menu'].append((
                 self._plugin.get_string(30215),
                 actions.background(self._plugin.url_for('artists_library_add', artist_id=artist.id))))
@@ -49,15 +50,16 @@ class Helpers:
             label = album.name + ' (' + str(album.get_release_date().year) + ')'
         item = {
             'label': label,
-            'path': self._plugin.url_for('albums_detail', album_id=album.id),
             'thumbnail': album.images[0].url,
             'context_menu': []
         }
         if in_library:
+            item['path'] = self._plugin.url_for('albums_library_tracks', album_id=album.id)
             item['context_menu'].append((
                 self._plugin.get_string(30217),
                 actions.update_view(self._plugin.url_for('albums_library_remove', album_id=album.id))))
         else:
+            item['path'] = self._plugin.url_for('albums_detail', album_id=album.id)
             item['context_menu'].append((
                 self._plugin.get_string(30215),
                 actions.background(self._plugin.url_for('albums_library_add', album_id=album.id))))
