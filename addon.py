@@ -21,11 +21,8 @@ def index():
     return [
         {'label': _(30200), 'path': plugin.url_for('library')},
         {'label': _(30201), 'path': plugin.url_for('search')},
-        {'label': _(30202), 'path': plugin.url_for('toplist')},
-        {'label': _(30203), 'path': plugin.url_for('albums_new')},
-        {'label': _(30204), 'path': plugin.url_for('albums_picks')},
-        {'label': _(30205), 'path': plugin.url_for('playlists_featured')},
-        {'label': _(30206), 'path': plugin.url_for('recent')},
+        {'label': _(30202), 'path': plugin.url_for('discover')},
+        {'label': _(30203), 'path': plugin.url_for('recent')},
     ]
 
 
@@ -38,6 +35,82 @@ def library():
         {'label': _(30213), 'path': plugin.url_for('favorites_library')},
         {'label': _(30214), 'path': plugin.url_for('playlists_library')},
     ]
+
+
+@plugin.route('/discover')
+def discover():
+    return [
+        {'label': _(30260), 'path': plugin.url_for('popular')},
+        {'label': _(30261), 'path': plugin.url_for('genres')},
+        {'label': _(30262), 'path': plugin.url_for('albums_new')},
+        {'label': _(30263), 'path': plugin.url_for('albums_picks')},
+        {'label': _(30264), 'path': plugin.url_for('playlists_featured')},
+    ]
+
+
+@plugin.route('/discover/popular')
+def popular():
+    return [
+        {'label': _(30220), 'path': plugin.url_for('artists_top')},
+        {'label': _(30221), 'path': plugin.url_for('albums_top')},
+        {'label': _(30222), 'path': plugin.url_for('tracks_top')},
+    ]
+
+
+@plugin.route('/genres')
+def genres():
+    parent_genre_id = plugin.request.args.get('parent_genre_id', [None])[0]
+    items = []
+    if parent_genre_id is None:
+        genres_list = rhapsody.genres.list()
+    else:
+        genres_list = rhapsody.genres.find(parent_genre_id).subgenres
+    for genre in genres_list:
+        items.append({'label': genre.name, 'path': plugin.url_for('genres_detail', genre_id=genre.id)})
+    return items
+
+
+@plugin.route('/genres/<genre_id>/detail')
+def genres_detail(genre_id):
+    return [
+        {'label': _(30220), 'path': plugin.url_for('genres_artists_top', genre_id=genre_id)},
+        {'label': _(30221), 'path': plugin.url_for('genres_albums_top', genre_id=genre_id)},
+        {'label': _(30222), 'path': plugin.url_for('genres_tracks_top', genre_id=genre_id)},
+        {'label': _(30262), 'path': plugin.url_for('genres_albums_new', genre_id=genre_id)},
+        {'label': _(30265), 'path': plugin.url_for('genres', parent_genre_id=genre_id)},
+    ]
+
+
+@plugin.route('/genres/<genre_id>/artists/top')
+def genres_artists_top(genre_id):
+    items = []
+    for artist in rhapsody.genres.top_artists(genre_id):
+        items.append(helpers.get_artist_item(artist))
+    return items
+
+
+@plugin.route('/genres/<genre_id>/albums/top')
+def genres_albums_top(genre_id):
+    items = []
+    for album in rhapsody.genres.top_albums(genre_id):
+        items.append(helpers.get_album_item(album))
+    return items
+
+
+@plugin.route('/genres/<genre_id>/tracks/top')
+def genres_tracks_top(genre_id):
+    items = []
+    for track in rhapsody.genres.top_tracks(genre_id):
+        items.append(helpers.get_track_item(track))
+    return items
+
+
+@plugin.route('/genres/<genre_id>/albums/new')
+def genres_albums_new(genre_id):
+    items = []
+    for album in rhapsody.genres.new_albums(genre_id):
+        items.append(helpers.get_album_item(album))
+    return items
 
 
 @plugin.route('/search')
@@ -66,15 +139,6 @@ def search():
             return items
         else:
             plugin.notify(_(30101).encode('utf-8'))
-
-
-@plugin.route('/top')
-def toplist():
-    return [
-        {'label': _(30220), 'path': plugin.url_for('artists_top')},
-        {'label': _(30221), 'path': plugin.url_for('albums_top')},
-        {'label': _(30222), 'path': plugin.url_for('tracks_top')},
-    ]
 
 
 @plugin.route('/recent')
@@ -170,9 +234,7 @@ def playlists_featured():
 
 @plugin.route('/playlists/library')
 def playlists_library():
-    items = [{
-             'label': _(30250),
-             'path': plugin.url_for('playlists_library_add')}]
+    items = [{'label': _(30250), 'path': plugin.url_for('playlists_library_add')}]
     for playlist in rhapsody.library.playlists():
         items.append({
             'label': playlist.name,

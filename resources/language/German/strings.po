@@ -60,22 +60,10 @@ msgid "Search"
 msgstr "Suchen"
 
 msgctxt "#30202"
-msgid "Charts"
-msgstr "Charts"
+msgid "Discover"
+msgstr "Entdecken"
 
 msgctxt "#30203"
-msgid "New Releases"
-msgstr "Neuerscheinungen"
-
-msgctxt "#30204"
-msgid "Staff Picks"
-msgstr "Empfehlungen"
-
-msgctxt "#30205"
-msgid "Featured Playlists"
-msgstr "Empfohlene Wiedergabelisten"
-
-msgctxt "#30206"
 msgid "Listening History"
 msgstr "Zuletzt gehört"
 
@@ -170,3 +158,27 @@ msgstr "Zu Wiedergabeliste {0:s} hinzufügen"
 msgctxt "#30254"
 msgid "Remove from playlist"
 msgstr "Aus Wiedergabelisten entfernen"
+
+msgctxt "#30260"
+msgid "Popular"
+msgstr "Beliebt"
+
+msgctxt "#30261"
+msgid "Genres"
+msgstr "Genres"
+
+msgctxt "#30262"
+msgid "New Releases"
+msgstr "Neuerscheinungen"
+
+msgctxt "#30263"
+msgid "Staff Picks"
+msgstr "Empfehlungen"
+
+msgctxt "#30264"
+msgid "Featured Playlists"
+msgstr "Wiedergabelisten"
+
+msgctxt "#30265"
+msgid "Subgenres"
+msgstr "Untergenres"
