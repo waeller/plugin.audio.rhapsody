@@ -45,7 +45,7 @@ class Helpers:
                 actions.background(self._plugin.url_for('artists_library_add', artist_id=artist.id))))
         return item
 
-    def get_album_item(self, album, show_artist=True, in_library=False):
+    def get_album_item(self, album, show_artist=True, in_library=False, library_artist_id=None):
         if show_artist:
             label = album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')'
         else:
@@ -57,9 +57,14 @@ class Helpers:
         }
         if in_library:
             item['path'] = self._plugin.url_for('albums_library_tracks', album_id=album.id)
-            item['context_menu'].append((
-                self._plugin.get_string(30217),
-                actions.update_view(self._plugin.url_for('albums_library_remove', album_id=album.id))))
+            if library_artist_id is None:
+                action = actions.update_view(self._plugin.url_for('albums_library_remove',
+                                                                  album_id=album.id))
+            else:
+                action = actions.update_view(self._plugin.url_for('artists_library_albums_remove',
+                                                                  artist_id=library_artist_id,
+                                                                  album_id=album.id))
+            item['context_menu'].append((self._plugin.get_string(30217), action))
         else:
             item['path'] = self._plugin.url_for('albums_detail', album_id=album.id)
             item['context_menu'].append((
@@ -68,7 +73,7 @@ class Helpers:
         return item
 
     def get_track_item(self, track, album=None, show_artist=True, in_library=False, in_favorites=False,
-                       in_playlists=False, playlist_id=None):
+                       in_playlists=False, playlist_id=None, library_album_id=None):
         if show_artist:
             label = track.artist.name + ' - ' + track.name
         else:
@@ -85,9 +90,14 @@ class Helpers:
             'context_menu': []
         }
         if in_library:
-            item['context_menu'].append((
-                self._plugin.get_string(30217),
-                actions.update_view(self._plugin.url_for('tracks_library_remove', track_id=track.id))))
+            if library_album_id is None:
+                action = actions.update_view(self._plugin.url_for('tracks_library_remove',
+                                                                  track_id=track.id))
+            else:
+                action = actions.update_view(self._plugin.url_for('albums_library_tracks_remove',
+                                                                  track_id=track.id,
+                                                                  album_id=library_album_id))
+            item['context_menu'].append((self._plugin.get_string(30217), action))
         else:
             item['context_menu'].append((
                 self._plugin.get_string(30215),

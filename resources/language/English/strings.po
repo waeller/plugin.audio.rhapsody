@@ -15,6 +15,10 @@ msgctxt "#30002"
 msgid "Consumer Secret"
 msgstr ""
 
+msgctxt "#30003"
+msgid "Debug mode"
+msgstr ""
+
 msgctxt "#30010"
 msgid "Account"
 msgstr ""
@@ -47,6 +51,14 @@ msgstr ""
 
 msgctxt "#30102"
 msgid "OK"
+msgstr ""
+
+msgctxt "#30103"
+msgid "Request failed. Please check your internet connection."
+msgstr ""
+
+msgctxt "#30104"
+msgid "The requested object doesn't exist anymore."
 msgstr ""
 
 # Labels

@@ -14,6 +14,7 @@ from helpers import Helpers
 
 helpers = Helpers(plugin)
 rhapsody = helpers.get_api()
+rhapsody.DEBUG = plugin.get_setting('api_debug', converter=bool)
 
 
 @plugin.route('/')
@@ -177,8 +178,14 @@ def artists_library():
 def artists_library_albums(artist_id):
     items = []
     for album in rhapsody.library.artist_albums(artist_id):
-        items.append(helpers.get_album_item(album, show_artist=False, in_library=True))
+        items.append(helpers.get_album_item(album, show_artist=False, in_library=True, library_artist_id=artist_id))
     return items
+
+
+@plugin.route('/artists/library/<artist_id>/albums/<album_id>/remove')
+def artists_library_albums_remove(artist_id, album_id):
+    rhapsody.library.remove_album(album_id)
+    return plugin.finish(artists_library_albums(artist_id), update_listing=True)
 
 
 @plugin.route('/artists/library/<artist_id>/add')
@@ -344,11 +351,18 @@ def albums_library():
 @plugin.route('/albums/library/<album_id>/tracks')
 def albums_library_tracks(album_id):
     items = []
+    album = rhapsody.albums.detail(album_id)
     for track in rhapsody.library.album_tracks(album_id):
-        track_item = helpers.get_track_item(track, show_artist=False, in_library=True)
+        track_item = helpers.get_track_item(track, album=album, show_artist=False, in_library=True)
         items.append(track_item)
     plugin.add_to_playlist(items, playlist='music')
     return items
+
+
+@plugin.route('/albums/library/<album_id>/tracks/<track_id>/remove')
+def albums_library_tracks_remove(album_id, track_id):
+    rhapsody.library.remove_track(track_id)
+    return plugin.finish(albums_library_tracks(album_id), update_listing=True)
 
 
 @plugin.route('/albums/library/<album_id>/add')
@@ -442,4 +456,9 @@ def play(track_id):
 
 
 if __name__ == '__main__':
-    plugin.run()
+    try:
+        plugin.run()
+    except rhapsody.RequestError:
+        plugin.notify(_(30103).encode('utf-8'))
+    except rhapsody.ResourceNotFoundError:
+        plugin.notify(_(30104).encode('utf-8'))

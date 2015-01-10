@@ -3,6 +3,7 @@
     <category label="30000">
         <setting label="30001" type="text" id="api_key" default=""/>
         <setting label="30002" type="text" id="api_secret" option="hidden" enable="!eq(-1,)" default=""/>
+        <setting label="30003" type="bool" id="api_debug" default="false"/>
     </category>
     <category label="30010">
         <setting label="30011" type="text" id="username" default=""/>

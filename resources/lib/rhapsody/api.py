@@ -3,6 +3,7 @@ import json
 from datetime import timedelta
 
 import requests
+from requests.exceptions import ConnectionError
 
 from rhapsody import cache
 from rhapsody.models.albums import Albums
@@ -22,11 +23,18 @@ class API:
     VERSION = 'v1'
     TOKEN_CACHE_LIFETIME = timedelta(days=30).seconds
     DEFAULT_CACHE_TIMEOUT = timedelta(hours=2).seconds
+    DEBUG = False
 
     class NotAuthenticatedError(Exception):
         pass
 
     class AuthenticationError(Exception):
+        pass
+
+    class RequestError(Exception):
+        pass
+
+    class ResourceNotFoundError(Exception):
         pass
 
     instance = None
@@ -71,6 +79,9 @@ class API:
                 self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
             except KeyError:
                 raise API.AuthenticationError
+            except ConnectionError:
+                raise API.RequestError
+            self._log_response(response)
         elif self.token.is_expired():
             self.refresh_token()
 
@@ -85,7 +96,11 @@ class API:
             'grant_type': 'refresh_token',
             'refresh_token': self.token.refresh_token
         }
-        response = requests.post(API.BASE_URL + 'oauth/access_token', data=data, auth=self._auth)
+        try:
+            response = requests.post(API.BASE_URL + 'oauth/access_token', data=data, auth=self._auth)
+        except ConnectionError:
+            raise API.RequestError
+        self._log_response(response)
         self.token.update_token(json.loads(response.text))
         self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
 
@@ -98,24 +113,54 @@ class API:
             headers['Authorization'] = 'Bearer ' + self.token.access_token
         return headers
 
+    def _log_response(self, response):
+        if self.DEBUG:
+            print {
+                'request': {
+                    'url': response.request.url,
+                },
+                'response': {
+                    'status': response.status_code,
+                    'text': response.text
+                }
+            }
+
     def get(self, url, params, headers=None):
         headers = self._get_headers(headers)
-        response = requests.get(API.BASE_URL + API.VERSION + '/' + url, params=params, headers=headers)
+        try:
+            response = requests.get(API.BASE_URL + API.VERSION + '/' + url, params=params, headers=headers)
+        except ConnectionError:
+            raise API.RequestError
+        if response.status_code == 404:
+            raise API.ResourceNotFoundError
+        self._log_response(response)
         return response.text
 
     def post(self, url, data, headers=None):
         headers = self._get_headers(headers)
-        response = requests.post(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
+        try:
+            response = requests.post(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
+        except ConnectionError:
+            raise API.RequestError
+        self._log_response(response)
         return response.text
 
     def put(self, url, data, headers=None):
         headers = self._get_headers(headers)
-        response = requests.put(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
+        try:
+            response = requests.put(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
+        except ConnectionError:
+            raise API.RequestError
+        self._log_response(response)
         return response.text
 
     def delete(self, url, headers=None):
         headers = self._get_headers(headers)
-        response = requests.delete(API.BASE_URL + API.VERSION + '/' + url, headers=headers)
+        try:
+            response = requests.delete(API.BASE_URL + API.VERSION + '/' + url, headers=headers)
+        except ConnectionError:
+            raise API.RequestError
+        self._log_response(response)
         return response.text
 
     def get_json(self, url, params, cache_timeout=DEFAULT_CACHE_TIMEOUT):
@@ -134,7 +179,7 @@ class API:
         cache_key = hashlib.sha1(json.dumps(cache_data)).hexdigest()
 
         response_text = None
-        if cache_timeout is not None:
+        if cache_timeout is not None and not self.DEBUG:
             response_text = self._cache.get(cache_key, cache_timeout)
 
         if response_text is None:

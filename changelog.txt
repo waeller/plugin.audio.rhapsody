@@ -1,2 +1,41 @@
+v0.5.1
+- Handle network errors
+- Handle ResourceNotFound errors
+- Fixed wrong redirection after deleting albums or tracks in library
+
+v0.5.0
+- Added library management
+- Added genres and subgenres
+- Added playlist add/rename/remove and adding/removing tracks for playlists
+- Fixed all albums/tracks being displayed in library for a given artist
+
+v0.4.0
+- Added threading for retrieving stream url
+- Remember last search
+
+v0.3.1
+- Added play start/stop logging for listening history
+
+v0.3.0
+- Added playlists
+- Added favorites
+
+v0.2.3
+- Added staff picks
+- Added new releases
+
+v0.2.2
+- Added listening history
+
+v0.2.1
+- Added search
+- Added settings entry for hiding compilations
+
+v0.2.0
+- Added library support
+
 v0.1.1
+- Handle authentication errors
+
+v0.1.0
 - Initial version
