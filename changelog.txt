@@ -1,3 +1,7 @@
+v1.0.0-rc.2
+- Stable release candidate
+- Fixed version in addons.xml
+
 v1.0.0-rc.1
 - Stable release candidate
 - Same as v0.5.1
