@@ -61,6 +61,10 @@ msgctxt "#30104"
 msgid "The requested object doesn't exist anymore."
 msgstr ""
 
+msgctxt "#30105"
+msgid "Rhapsody service is unavailable."
+msgstr ""
+
 # Labels
 
 msgctxt "#30200"
@@ -169,6 +173,10 @@ msgstr ""
 
 msgctxt "#30254"
 msgid "Remove from playlist"
+msgstr ""
+
+msgctxt "#30255"
+msgid "More from {0:s}"
 msgstr ""
 
 msgctxt "#30260"

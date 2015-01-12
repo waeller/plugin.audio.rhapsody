@@ -5,7 +5,7 @@ from datetime import timedelta
 import requests
 from requests.exceptions import ConnectionError
 
-from rhapsody import cache
+from rhapsody import cache, exceptions
 from rhapsody.models.albums import Albums
 from rhapsody.models.artists import Artists
 from rhapsody.models.events import Events
@@ -23,19 +23,8 @@ class API:
     VERSION = 'v1'
     TOKEN_CACHE_LIFETIME = timedelta(days=30).seconds
     DEFAULT_CACHE_TIMEOUT = timedelta(hours=2).seconds
+    MAX_RETRIES = 3
     DEBUG = False
-
-    class NotAuthenticatedError(Exception):
-        pass
-
-    class AuthenticationError(Exception):
-        pass
-
-    class RequestError(Exception):
-        pass
-
-    class ResourceNotFoundError(Exception):
-        pass
 
     instance = None
     token = Token
@@ -78,9 +67,9 @@ class API:
                 self.token = Token(json.loads(response.text))
                 self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
             except KeyError:
-                raise API.AuthenticationError
+                raise exceptions.AuthenticationError
             except ConnectionError:
-                raise API.RequestError
+                raise exceptions.RequestError
             self._log_response(response)
         elif self.token.is_expired():
             self.refresh_token()
@@ -99,7 +88,7 @@ class API:
         try:
             response = requests.post(API.BASE_URL + 'oauth/access_token', data=data, auth=self._auth)
         except ConnectionError:
-            raise API.RequestError
+            raise exceptions.RequestError
         self._log_response(response)
         self.token.update_token(json.loads(response.text))
         self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
@@ -125,45 +114,57 @@ class API:
                 }
             }
 
-    def get(self, url, params, headers=None):
+    def get(self, url, params, headers=None, retry=0):
         headers = self._get_headers(headers)
         try:
             response = requests.get(API.BASE_URL + API.VERSION + '/' + url, params=params, headers=headers)
         except ConnectionError:
-            raise API.RequestError
+            if retry < self.MAX_RETRIES:
+                return self.get(url, params, headers, retry + 1)
+            else:
+                raise exceptions.RequestError
         if response.status_code == 404:
-            raise API.ResourceNotFoundError
+            raise exceptions.ResourceNotFoundError
         self._log_response(response)
         return response.text
 
-    def post(self, url, data, headers=None):
+    def post(self, url, data, headers=None, retry=0):
         headers = self._get_headers(headers)
         try:
             response = requests.post(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
         except ConnectionError:
-            raise API.RequestError
+            if retry < self.MAX_RETRIES:
+                return self.post(url, data, headers, retry + 1)
+            else:
+                raise exceptions.RequestError
         self._log_response(response)
         return response.text
 
-    def put(self, url, data, headers=None):
+    def put(self, url, data, headers=None, retry=0):
         headers = self._get_headers(headers)
         try:
             response = requests.put(API.BASE_URL + API.VERSION + '/' + url, data=data, headers=headers)
         except ConnectionError:
-            raise API.RequestError
+            if retry < self.MAX_RETRIES:
+                return self.put(url, data, headers, retry + 1)
+            else:
+                raise exceptions.RequestError
         self._log_response(response)
         return response.text
 
-    def delete(self, url, headers=None):
+    def delete(self, url, headers=None, retry=0):
         headers = self._get_headers(headers)
         try:
             response = requests.delete(API.BASE_URL + API.VERSION + '/' + url, headers=headers)
         except ConnectionError:
-            raise API.RequestError
+            if retry < self.MAX_RETRIES:
+                return self.delete(url, headers, retry + 1)
+            else:
+                raise exceptions.RequestError
         self._log_response(response)
         return response.text
 
-    def get_json(self, url, params, cache_timeout=DEFAULT_CACHE_TIMEOUT):
+    def get_json(self, url, params, cache_timeout=DEFAULT_CACHE_TIMEOUT, retry=0):
         cache_data = {
             'url': url,
             'params': params,
@@ -179,7 +180,7 @@ class API:
         cache_key = hashlib.sha1(json.dumps(cache_data)).hexdigest()
 
         response_text = None
-        if cache_timeout is not None and not self.DEBUG:
+        if cache_timeout is not None and not self.DEBUG and retry == 0:
             response_text = self._cache.get(cache_key, cache_timeout)
 
         if response_text is None:
@@ -187,13 +188,19 @@ class API:
             if cache_timeout is not None:
                 self._cache.set(cache_key, response_text, cache_timeout)
 
-        return response_text
+        try:
+            return json.loads(response_text)
+        except ValueError:
+            if retry < self.MAX_RETRIES:
+                return self.get_json(url, params, cache_timeout, retry + 1)
+            else:
+                raise exceptions.ResponseError
 
     def get_detail(self, model, obj, obj_id, cache_timeout=None, params=None):
         if params is None:
             params = dict()
         params['apikey'] = self._key
-        return model(json.loads(self.get_json(obj + '/' + obj_id, params, cache_timeout)))
+        return model(self.get_json(obj + '/' + obj_id, params, cache_timeout))
 
     def get_list(self, model, obj, limit=None, offset=None, cache_timeout=None, params=None):
         if params is None:
@@ -204,6 +211,6 @@ class API:
             if offset is not None:
                 params['offset'] = limit
         items = []
-        for item in json.loads(self.get_json(obj, params, cache_timeout)):
+        for item in self.get_json(obj, params, cache_timeout):
             items.append(model(item))
         return items

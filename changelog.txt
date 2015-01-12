@@ -1,3 +1,8 @@
+v1.0.0-rc.3
+- Stable release candidate
+- Added retries to Rhapsody module to overcome random server errors
+- Added "More from <artist>" to context menu for albums and tracks
+
 v1.0.0-rc.2
 - Stable release candidate
 - Fixed version in addons.xml

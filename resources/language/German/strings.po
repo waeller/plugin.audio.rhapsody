@@ -57,10 +57,13 @@ msgctxt "#30103"
 msgid "Request failed. Please check your internet connection."
 msgstr "Anfrage fehlgeschlagen. Bitte überprüfe deine Internetverbindung."
 
-
 msgctxt "#30104"
 msgid "The requested object doesn't exist anymore."
 msgstr "Das angeforderte Objekt existiert nicht mehr."
+
+msgctxt "#30105"
+msgid "Rhapsody service is unavailable."
+msgstr "Der Rhapsody Dienst ist nicht verfügbar."
 
 # Labels
 
@@ -171,6 +174,10 @@ msgstr "Zu Wiedergabeliste {0:s} hinzufügen"
 msgctxt "#30254"
 msgid "Remove from playlist"
 msgstr "Aus Wiedergabelisten entfernen"
+
+msgctxt "#30255"
+msgid "More from {0:s}"
+msgstr "Mehr von {0:s}"
 
 msgctxt "#30260"
 msgid "Popular"

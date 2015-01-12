@@ -1,4 +1,6 @@
 from xbmcswift2 import actions
+
+from rhapsody import exceptions
 from rhapsody.api import API
 from rhapsody.cache import Base as BaseCache
 
@@ -55,6 +57,10 @@ class Helpers:
             'thumbnail': album.images[0].url,
             'context_menu': []
         }
+        item['context_menu'].append((
+            self._plugin.get_string(30255).format(album.artist.name),
+            actions.update_view(self._plugin.url_for('artists_detail', artist_id=album.artist.id))
+        ))
         if in_library:
             item['path'] = self._plugin.url_for('albums_library_tracks', album_id=album.id)
             if library_artist_id is None:
@@ -89,6 +95,10 @@ class Helpers:
             },
             'context_menu': []
         }
+        item['context_menu'].append((
+            self._plugin.get_string(30255).format(track.artist.name),
+            actions.update_view(self._plugin.url_for('artists_detail', artist_id=track.artist.id))
+        ))
         if in_library:
             if library_album_id is None:
                 action = actions.update_view(self._plugin.url_for('tracks_library_remove',
@@ -152,7 +162,7 @@ class Helpers:
             username = self._plugin.get_setting('username', converter=unicode)
             password = self._plugin.get_setting('password', converter=unicode)
             rhapsody.login(username, password)
-        except rhapsody.AuthenticationError:
+        except exceptions.AuthenticationError:
             self._plugin.notify(self._plugin.get_string(30100).encode('utf-8'))
             self._plugin.open_settings()
             exit()

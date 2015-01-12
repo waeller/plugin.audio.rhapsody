@@ -1,8 +1,8 @@
-from multiprocessing.pool import ThreadPool
 import os
 import sys
 
 from xbmcswift2 import Plugin, actions
+
 
 plugin = Plugin()
 sys.path.append(os.path.join(plugin.addon.getAddonInfo('path'), 'resources', 'lib'))
@@ -11,6 +11,7 @@ _ = plugin.get_string
 cache = plugin.get_storage('data', TTL=0)
 
 from helpers import Helpers
+from rhapsody import exceptions
 
 helpers = Helpers(plugin)
 rhapsody = helpers.get_api()
@@ -430,6 +431,8 @@ def tracks_library_remove(track_id):
 
 @plugin.route('/play/<track_id>')
 def play(track_id):
+    from multiprocessing.pool import ThreadPool
+
     album_id = plugin.request.args.get('album_id', [False])[0]
     duration = plugin.request.args.get('duration', [False])[0]
     thumbnail_missing = plugin.request.args.get('thumbnail_missing', [False])[0]
@@ -458,7 +461,9 @@ def play(track_id):
 if __name__ == '__main__':
     try:
         plugin.run()
-    except rhapsody.RequestError:
+    except exceptions.RequestError:
         plugin.notify(_(30103).encode('utf-8'))
     except rhapsody.ResourceNotFoundError:
         plugin.notify(_(30104).encode('utf-8'))
+    except exceptions.ResponseError:
+        plugin.notify(_(30105).encode('utf-8'))
