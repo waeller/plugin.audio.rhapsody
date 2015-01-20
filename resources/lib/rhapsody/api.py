@@ -6,6 +6,7 @@ import requests
 from requests.exceptions import ConnectionError
 
 from rhapsody import cache, exceptions
+from rhapsody.account import Account
 from rhapsody.models.albums import Albums
 from rhapsody.models.artists import Artists
 from rhapsody.models.events import Events
@@ -48,6 +49,7 @@ class API:
         self.tracks = Tracks(self)
 
         self.token = self._cache.get('token', API.TOKEN_CACHE_LIFETIME)
+        self.account = self._cache.get('account', API.TOKEN_CACHE_LIFETIME)
 
     def is_authenticated(self):
         try:
@@ -65,6 +67,7 @@ class API:
             try:
                 response = requests.post(API.BASE_URL + 'oauth/token', data=data, auth=self._auth)
                 self.token = Token(json.loads(response.text))
+                self.account = None
                 self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
             except KeyError:
                 raise exceptions.AuthenticationError
@@ -74,8 +77,12 @@ class API:
         elif self.token.is_expired():
             try:
                 self.refresh_token()
+                self.account = None
             except KeyError:
                 self.login(username, password, reuse_token=False)
+        if self.account is None:
+            self.account = self.get_detail(Account, 'me', 'account')
+            self._cache.set('account', self.account, API.TOKEN_CACHE_LIFETIME)
 
     def logout(self):
         self.token = None

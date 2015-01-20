@@ -1,4 +1,5 @@
 from metadata import *
+from rhapsody import exceptions
 
 
 class Detail(object):
@@ -12,3 +13,14 @@ class Streams(MetadataDetail):
     url_base = 'play'
     detail_class = Detail
     cache_timeout = 300
+
+    def detail(self, obj_id):
+        if not self._api.is_authenticated():
+            raise exceptions.StreamingRightsError
+        if not self._api.account.can_stream_on_home_device:
+            raise exceptions.StreamingRightsError
+        if not self._api.account.can_stream_on_mobile:
+            raise exceptions.StreamingRightsError
+        if not self._api.account.can_stream_on_pc:
+            raise exceptions.StreamingRightsError
+        return super(Streams, self).detail(obj_id)

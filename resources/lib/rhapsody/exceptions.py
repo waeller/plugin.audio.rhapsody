@@ -16,3 +16,7 @@ class ResponseError(Exception):
 
 class ResourceNotFoundError(Exception):
     pass
+
+
+class StreamingRightsError(Exception):
+    pass

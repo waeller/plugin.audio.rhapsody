@@ -65,6 +65,10 @@ msgctxt "#30105"
 msgid "Rhapsody service is unavailable."
 msgstr "Der Rhapsody Dienst ist nicht verfügbar."
 
+msgctxt "#30106"
+msgid "Your membership does not allow streaming on this device."
+msgstr "Deine Mitgliedschaft erlaubt das Streamen auf diesem Gerät nicht."
+
 # Labels
 
 msgctxt "#30200"

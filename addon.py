@@ -467,3 +467,5 @@ if __name__ == '__main__':
         plugin.notify(_(30104).encode('utf-8'))
     except exceptions.ResponseError:
         plugin.notify(_(30105).encode('utf-8'))
+    except exceptions.StreamingRightsError:
+        plugin.notify(_(30106).encode('utf-8'))

@@ -1,3 +1,7 @@
+v1.0.0-rc.5
+- Stable release candidate
+- Added error message when trying to play a stream with a subscription that isn't allowed to stream on home, pc or mobile devices
+
 v1.0.0-rc.4
 - Stable release candidate
 - Fixed api token being cached forever
