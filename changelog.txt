@@ -1,6 +1,7 @@
 v1.0.0-rc.4
 - Stable release candidate
 - Fixed api token being cached forever
+- Fixed crash when accessing a resource (such as an artist, album or track) that is not available anymore
 
 v1.0.0-rc.3
 - Stable release candidate

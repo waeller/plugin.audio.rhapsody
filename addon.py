@@ -463,7 +463,7 @@ if __name__ == '__main__':
         plugin.run()
     except exceptions.RequestError:
         plugin.notify(_(30103).encode('utf-8'))
-    except rhapsody.ResourceNotFoundError:
+    except exceptions.ResourceNotFoundError:
         plugin.notify(_(30104).encode('utf-8'))
     except exceptions.ResponseError:
         plugin.notify(_(30105).encode('utf-8'))
