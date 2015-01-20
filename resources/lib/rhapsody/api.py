@@ -55,8 +55,8 @@ class API:
         except AttributeError:
             return False
 
-    def login(self, username, password):
-        if not self.is_authenticated() or self.token.username != username:
+    def login(self, username, password, reuse_token=True):
+        if not self.is_authenticated() or self.token.username != username or not reuse_token:
             data = {
                 'username': username,
                 'password': password,
@@ -72,7 +72,10 @@ class API:
                 raise exceptions.RequestError
             self._log_response(response)
         elif self.token.is_expired():
-            self.refresh_token()
+            try:
+                self.refresh_token()
+            except KeyError:
+                self.login(username, password, reuse_token=False)
 
     def logout(self):
         self.token = None
