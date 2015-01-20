@@ -21,8 +21,8 @@ from rhapsody.token import Token
 class API:
     BASE_URL = 'https://api.rhapsody.com/'
     VERSION = 'v1'
-    TOKEN_CACHE_LIFETIME = timedelta(days=30).seconds
-    DEFAULT_CACHE_TIMEOUT = timedelta(hours=2).seconds
+    TOKEN_CACHE_LIFETIME = timedelta(days=30).total_seconds()
+    DEFAULT_CACHE_TIMEOUT = timedelta(hours=2).total_seconds()
     MAX_RETRIES = 3
     DEBUG = False
 

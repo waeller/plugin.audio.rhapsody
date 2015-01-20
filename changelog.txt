@@ -1,3 +1,7 @@
+v1.0.0-rc.4
+- Stable release candidate
+- Fixed api token being cached forever
+
 v1.0.0-rc.3
 - Stable release candidate
 - Added retries to Rhapsody module to overcome random server errors
