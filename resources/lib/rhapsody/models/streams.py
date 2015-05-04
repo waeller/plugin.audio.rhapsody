@@ -23,4 +23,6 @@ class Streams(MetadataDetail):
             raise exceptions.StreamingRightsError
         if not self._api.account.can_stream_on_pc:
             raise exceptions.StreamingRightsError
+        if not self._api.account.can_stream_on_web:
+            raise exceptions.StreamingRightsError
         return super(Streams, self).detail(obj_id)
