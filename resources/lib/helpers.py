@@ -3,6 +3,7 @@ from xbmcswift2 import actions
 from rhapsody import exceptions
 from rhapsody.api import API
 from rhapsody.cache import Base as BaseCache
+from rhapsody.models.common import Image
 
 
 class Helpers:
@@ -54,7 +55,7 @@ class Helpers:
             label = album.name + ' (' + str(album.get_release_date().year) + ')'
         item = {
             'label': label,
-            'thumbnail': album.images[0].url,
+            'thumbnail': album.images[0].get_url(size=Image.SIZE_ORIGINAL),
             'context_menu': []
         }
         item['context_menu'].append((
@@ -139,7 +140,7 @@ class Helpers:
             thumbnail_missing = True
         else:
             thumbnail_missing = False
-            item['thumbnail'] = album.images[0].url
+            item['thumbnail'] = album.images[0].get_url(size=Image.SIZE_ORIGINAL)
             # item['info']['tracknumber'] = [i for i, j in enumerate(album.tracks) if j.id == track.id][0] + 1
         item['path'] = self._plugin.url_for(
             'play',

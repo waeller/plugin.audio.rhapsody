@@ -431,6 +431,7 @@ def tracks_library_remove(track_id):
 
 @plugin.route('/play/<track_id>')
 def play(track_id):
+    from rhapsody.models.common import Image
     from multiprocessing.pool import ThreadPool
 
     album_id = plugin.request.args.get('album_id', [False])[0]
@@ -445,7 +446,7 @@ def play(track_id):
     if thumbnail_missing:
         album_result = pool.apply_async(lambda: rhapsody.albums.detail(album_id))
         album = album_result.get()
-        item['thumbnail'] = album.images[0].url
+        item['thumbnail'] = album.images[0].get_url(size=Image.SIZE_ORIGINAL)
 
     stream = stream_result.get()
     item['path'] = stream.url
