@@ -17,6 +17,10 @@ helpers = Helpers(plugin)
 rhapsody = helpers.get_api()
 rhapsody.DEBUG = plugin.get_setting('api_debug', converter=bool)
 
+if rhapsody.DEBUG:
+    import requests
+    requests.packages.urllib3.disable_warnings()
+
 
 @plugin.route('/')
 def index():
@@ -432,31 +436,23 @@ def tracks_library_remove(track_id):
 @plugin.route('/play/<track_id>')
 def play(track_id):
     from rhapsody.models.common import Image
-    from multiprocessing.pool import ThreadPool
 
     album_id = plugin.request.args.get('album_id', [False])[0]
     duration = plugin.request.args.get('duration', [False])[0]
     thumbnail_missing = plugin.request.args.get('thumbnail_missing', [False])[0]
 
     item = dict()
-    pool = ThreadPool(processes=2)
-
-    stream_result = pool.apply_async(lambda: rhapsody.streams.detail(track_id))
 
     if thumbnail_missing:
-        album_result = pool.apply_async(lambda: rhapsody.albums.detail(album_id))
-        album = album_result.get()
+        album = rhapsody.albums.detail(album_id)
         item['thumbnail'] = album.images[0].get_url(size=Image.SIZE_ORIGINAL)
 
-    stream = stream_result.get()
+    stream = rhapsody.streams.detail(track_id)
     item['path'] = stream.url
     plugin.set_resolved_url(item)
 
     started = rhapsody.events.log_playstart(track_id, stream)
     rhapsody.events.log_playstop(track_id, stream, started, duration)
-
-    pool.close()
-    pool.join()
 
 
 if __name__ == '__main__':
