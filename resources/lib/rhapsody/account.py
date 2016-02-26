@@ -36,4 +36,3 @@ class Account(object):
         self.trial_length_days = data['trialLengthDays']
         self.country = data['country']
         self.logon = data['logon']
-
