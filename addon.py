@@ -3,23 +3,7 @@ import sys
 
 from xbmcswift2 import Plugin
 
-
 plugin = Plugin()
-sys.path.append(os.path.join(plugin.addon.getAddonInfo('path'), 'resources', 'lib'))
-
-_ = plugin.get_string
-cache = plugin.get_storage('data', TTL=0)
-
-from helpers import Helpers
-from rhapsody import exceptions
-
-helpers = Helpers(plugin)
-rhapsody = helpers.get_api()
-rhapsody.DEBUG = plugin.get_setting('api_debug', converter=bool)
-
-if rhapsody.DEBUG:
-    import requests
-    requests.packages.urllib3.disable_warnings()
 
 
 @plugin.route('/')
@@ -439,6 +423,23 @@ def play(track_id):
 
 
 if __name__ == '__main__':
+    sys.path.append(os.path.join(plugin.addon.getAddonInfo('path'), 'resources', 'lib'))
+
+    _ = plugin.get_string
+    cache = plugin.get_storage('data', TTL=0)
+
+    from helpers import Helpers
+    from rhapsody import exceptions
+
+    helpers = Helpers(plugin)
+    rhapsody = helpers.get_api()
+    rhapsody.DEBUG = plugin.get_setting('api_debug', converter=bool)
+
+    if rhapsody.DEBUG:
+        import requests
+
+        requests.packages.urllib3.disable_warnings()
+
     try:
         plugin.run()
     except exceptions.RequestError:
