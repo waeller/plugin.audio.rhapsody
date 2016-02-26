@@ -1,6 +1,5 @@
 import hashlib
 import json
-from datetime import timedelta
 
 import requests
 from requests.exceptions import ConnectionError
@@ -22,8 +21,8 @@ from rhapsody.token import Token
 class API:
     BASE_URL = 'https://api.rhapsody.com/'
     VERSION = 'v1'
-    TOKEN_CACHE_LIFETIME = timedelta(days=30).total_seconds()
-    DEFAULT_CACHE_TIMEOUT = timedelta(hours=2).total_seconds()
+    TOKEN_CACHE_LIFETIME = 60 * 60 * 24 * 7   # 7 days
+    DEFAULT_CACHE_TIMEOUT = 60 * 60 * 2       # 2 hours
     MAX_RETRIES = 3
     DEBUG = False
 
