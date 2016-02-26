@@ -34,7 +34,11 @@ class Helpers:
     def get_artist_item(self, artist, in_library=False):
         item = {
             'label': artist.name,
-            'context_menu': []
+            'thumbnail': Image.get_url(Image.TYPE_ARTIST, artist.id, Image.SIZE_ARTIST_ORIGINAL),
+            'properties': {
+                'fanart_image': Image.get_url(Image.TYPE_ARTIST, artist.id, Image.SIZE_ARTIST_ORIGINAL),
+            },
+            'context_menu': [],
         }
         if in_library:
             item['path'] = self._plugin.url_for('artists_library_albums', artist_id=artist.id)
@@ -55,7 +59,10 @@ class Helpers:
             label = album.name + ' (' + str(album.get_release_date().year) + ')'
         item = {
             'label': label,
-            'thumbnail': album.images[0].get_url(size=Image.SIZE_ORIGINAL),
+            'thumbnail': Image.get_url(Image.TYPE_ALBUM, album.id, Image.SIZE_ALBUM_ORIGINAL),
+            'properties': {
+                'fanart_image': Image.get_url(Image.TYPE_ARTIST, album.artist.id, Image.SIZE_ARTIST_ORIGINAL),
+            },
             'context_menu': []
         }
         item['context_menu'].append((
@@ -79,7 +86,40 @@ class Helpers:
                 actions.background(self._plugin.url_for('albums_library_add', album_id=album.id))))
         return item
 
-    def get_track_item(self, track, album=None, show_artist=True, in_library=False, in_favorites=False,
+    def get_genre_item(self, genre):
+        item = {
+            'label': genre.name,
+            'path': self._plugin.url_for('genres_detail', genre_id=genre.id),
+            'thumbnail': Image.get_url(Image.TYPE_GENRE, genre.id, Image.SIZE_GENRE_ORIGINAL),
+            'properties': {
+                'fanart_image': Image.get_url(Image.TYPE_GENRE, genre.id, Image.SIZE_GENRE_ORIGINAL),
+            }
+        }
+        return item
+
+    def get_playlist_item(self, playlist, in_library=False):
+        item = {
+            'label': playlist.name,
+            'path': self._plugin.url_for('playlists_detail', playlist_id=playlist.id),
+            'thumbnail': Image.get_url(Image.TYPE_PLAYLIST, playlist.id, Image.SIZE_PLAYLIST_ORIGINAL),
+            'properties': {
+                'fanart_image': Image.get_url(Image.TYPE_PLAYLIST, playlist.id, Image.SIZE_PLAYLIST_ORIGINAL),
+            }
+        }
+        if in_library:
+            item['context_menu'] = [
+                (
+                    self._plugin.get_string(30251),
+                    actions.update_view(self._plugin.url_for('playlists_library_rename', playlist_id=playlist.id))
+                ),
+                (
+                    self._plugin.get_string(30252),
+                    actions.update_view(self._plugin.url_for('playlists_library_remove', playlist_id=playlist.id))
+                )
+            ]
+        return item
+
+    def get_track_item(self, track, show_artist=True, in_library=False, in_favorites=False,
                        in_playlists=False, playlist_id=None, library_album_id=None):
         if show_artist:
             label = track.artist.name + ' - ' + track.name
@@ -93,6 +133,10 @@ class Helpers:
                 'artist': track.artist.name,
                 'album': track.album.name,
                 'duration': track.duration
+            },
+            'thumbnail': Image.get_url(Image.TYPE_ALBUM, track.album.id, Image.SIZE_ALBUM_ORIGINAL),
+            'properties': {
+                'fanart_image': Image.get_url(Image.TYPE_ARTIST, track.artist.id, Image.SIZE_ARTIST_ORIGINAL),
             },
             'context_menu': []
         }
@@ -136,18 +180,12 @@ class Helpers:
                     self._plugin.get_string(30253).format(playlist.name),
                     actions.background(self._plugin.url_for('playlists_library_add_track',
                                                             track_id=track.id, playlist_id=playlist.id))))
-        if album is None:
-            thumbnail_missing = True
-        else:
-            thumbnail_missing = False
-            item['thumbnail'] = album.images[0].get_url(size=Image.SIZE_ORIGINAL)
-            # item['info']['tracknumber'] = [i for i, j in enumerate(album.tracks) if j.id == track.id][0] + 1
+
         item['path'] = self._plugin.url_for(
             'play',
             track_id=track.id,
             album_id=track.album.id,
-            duration=track.duration,
-            thumbnail_missing=thumbnail_missing)
+            duration=track.duration)
         return item
 
     def refresh_playlists(self):

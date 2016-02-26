@@ -1,7 +1,7 @@
 import os
 import sys
 
-from xbmcswift2 import Plugin, actions
+from xbmcswift2 import Plugin
 
 
 plugin = Plugin()
@@ -72,7 +72,7 @@ def genres():
     else:
         genres_list = rhapsody.genres.find(parent_genre_id).subgenres
     for genre in genres_list:
-        items.append({'label': genre.name, 'path': plugin.url_for('genres_detail', genre_id=genre.id)})
+        items.append(helpers.get_genre_item(genre))
     return items
 
 
@@ -240,7 +240,7 @@ def favorites_library():
 def playlists_featured():
     items = []
     for playlist in rhapsody.playlists.featured():
-        items.append({'label': playlist.name, 'path': plugin.url_for('playlists_detail', playlist_id=playlist.id)})
+        items.append(helpers.get_playlist_item(playlist, in_library=False))
     return items
 
 
@@ -248,20 +248,7 @@ def playlists_featured():
 def playlists_library():
     items = [{'label': _(30250), 'path': plugin.url_for('playlists_library_add')}]
     for playlist in rhapsody.library.playlists():
-        items.append({
-            'label': playlist.name,
-            'path': plugin.url_for('playlists_library_detail', playlist_id=playlist.id),
-            'context_menu': [
-                (
-                    _(30251),
-                    actions.update_view(plugin.url_for('playlists_library_rename', playlist_id=playlist.id))
-                ),
-                (
-                    _(30252),
-                    actions.update_view(plugin.url_for('playlists_library_remove', playlist_id=playlist.id))
-                )
-            ]
-        })
+        items.append(helpers.get_playlist_item(playlist, in_library=True))
     return items
 
 
@@ -356,9 +343,8 @@ def albums_library():
 @plugin.route('/albums/library/<album_id>/tracks')
 def albums_library_tracks(album_id):
     items = []
-    album = rhapsody.albums.detail(album_id)
     for track in rhapsody.library.album_tracks(album_id):
-        track_item = helpers.get_track_item(track, album=album, show_artist=False, in_library=True)
+        track_item = helpers.get_track_item(track, show_artist=False, in_library=True)
         items.append(track_item)
     plugin.add_to_playlist(items, playlist='music')
     return items
@@ -387,7 +373,7 @@ def albums_detail(album_id):
     album = rhapsody.albums.detail(album_id)
     items = []
     for track in album.tracks:
-        items.append(helpers.get_track_item(track, album, show_artist=False))
+        items.append(helpers.get_track_item(track, show_artist=False))
     return items
 
 
@@ -439,13 +425,10 @@ def play(track_id):
 
     album_id = plugin.request.args.get('album_id', [False])[0]
     duration = plugin.request.args.get('duration', [False])[0]
-    thumbnail_missing = plugin.request.args.get('thumbnail_missing', [False])[0]
 
     item = dict()
 
-    if thumbnail_missing:
-        album = rhapsody.albums.detail(album_id)
-        item['thumbnail'] = album.images[0].get_url(size=Image.SIZE_ORIGINAL)
+    item['thumbnail'] = Image.get_url(Image.TYPE_ALBUM, album_id, Image.SIZE_ALBUM_ORIGINAL)
 
     stream = rhapsody.streams.detail(track_id)
     item['path'] = stream.url
