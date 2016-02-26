@@ -23,7 +23,7 @@ class List(Base):
         self.type = List.Type(data['type'])
         self.images = [common.Image(x) for x in data['images']]
         self.released = data['released']
-        
+
     def get_release_date(self):
         return date.fromtimestamp(self.released / 1000)
 

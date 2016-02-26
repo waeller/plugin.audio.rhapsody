@@ -182,10 +182,10 @@ class Helpers:
                                                             track_id=track.id, playlist_id=playlist.id))))
 
         item['path'] = self._plugin.url_for(
-            'play',
-            track_id=track.id,
-            album_id=track.album.id,
-            duration=track.duration)
+                'play',
+                track_id=track.id,
+                album_id=track.album.id,
+                duration=track.duration)
         return item
 
     def refresh_playlists(self):

@@ -121,4 +121,4 @@ class Library(object):
         # TODO: This call sometimes fails silently so we simply call it 3 times. Definitely needs a better solution
         for x in range(3):
             self._api.put('me/playlists/' + playlist_id + '/tracks', json.dumps(data),
-                           headers={'Content-Type': 'application/json'})
+                          headers={'Content-Type': 'application/json'})

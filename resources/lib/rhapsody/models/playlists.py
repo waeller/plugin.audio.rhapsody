@@ -8,7 +8,7 @@ class List(object):
         self.name = data['name']
         self.author = data['author']
         self.created = data['created']
-        
+
     def get_created_date(self):
         return date.fromtimestamp(self.created / 1000)
 
