@@ -1,5 +1,6 @@
 import os
 import sys
+from cStringIO import StringIO
 
 from xbmcswift2 import Plugin
 
@@ -440,13 +441,21 @@ if __name__ == '__main__':
 
         requests.packages.urllib3.disable_warnings()
 
+    sys.stdout = StringIO()
+
     try:
         plugin.run()
     except exceptions.RequestError:
         plugin.notify(_(30103).encode('utf-8'))
+        plugin.log.error(sys.stdout.getvalue())
     except exceptions.ResourceNotFoundError:
         plugin.notify(_(30104).encode('utf-8'))
+        plugin.log.error(sys.stdout.getvalue())
     except exceptions.ResponseError:
         plugin.notify(_(30105).encode('utf-8'))
+        plugin.log.error(sys.stdout.getvalue())
     except exceptions.StreamingRightsError:
         plugin.notify(_(30106).encode('utf-8'))
+        plugin.log.error(sys.stdout.getvalue())
+
+    plugin.log.info(sys.stdout.getvalue())

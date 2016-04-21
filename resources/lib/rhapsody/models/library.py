@@ -51,7 +51,7 @@ class Library(object):
 
         return self._api.get_list(tracks.List, 'me/listens', limit, offset, cache_timeout=None)
 
-    def playlists(self, limit=None, offset=None):
+    def playlists(self, limit=100, offset=0):
         from rhapsody.models import playlists
 
         return self._api.get_list(playlists.List, 'me/playlists', limit, offset, cache_timeout=None)

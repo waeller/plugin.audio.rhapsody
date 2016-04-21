@@ -10,10 +10,7 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Plugin for Rhapsody/Napster/MTV-Music</summary>
-        <description lang="en">
-            A free Rhapsody developer account is required. Create it at https://developer.rhapsody.com/signin and
-            start a new app. Enter Consumer Key, Consumer Secret and your user credentials in addon settings.
-        </description>
+        <description lang="en"></description>
         <disclaimer/>
         <language>en de</language>
         <platform>all</platform>

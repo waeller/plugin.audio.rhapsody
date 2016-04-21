@@ -116,6 +116,7 @@ class API:
             print {
                 'request': {
                     'url': response.request.url,
+                    'headers': response.request.headers
                 },
                 'response': {
                     'status': response.status_code,
@@ -127,15 +128,15 @@ class API:
         headers = self._get_headers(headers)
         try:
             response = requests.get(API.BASE_URL + API.VERSION + '/' + url, params=params, headers=headers)
+            self._log_response(response)
+            if response.status_code == 404:
+                raise exceptions.ResourceNotFoundError
+            return response.text
         except ConnectionError:
             if retry < self.MAX_RETRIES:
                 return self.get(url, params, headers, retry + 1)
             else:
                 raise exceptions.RequestError
-        if response.status_code == 404:
-            raise exceptions.ResourceNotFoundError
-        self._log_response(response)
-        return response.text
 
     def post(self, url, data, headers=None, retry=0):
         headers = self._get_headers(headers)
@@ -183,7 +184,7 @@ class API:
         if self.is_authenticated():
             if self.token.is_expired():
                 self.refresh_token()
-            params['catalog'] = self.token.catalog
+            # params['catalog'] = self.token.catalog
             cache_data['user'] = self.token.username
 
         cache_key = hashlib.sha1(json.dumps(cache_data)).hexdigest()
@@ -208,17 +209,19 @@ class API:
     def get_detail(self, model, obj, obj_id, cache_timeout=None, params=None):
         if params is None:
             params = dict()
-        params['apikey'] = self._key
+        if not self.is_authenticated():
+            params['apikey'] = self._key
         return model(self.get_json(obj + '/' + obj_id, params, cache_timeout))
 
     def get_list(self, model, obj, limit=None, offset=None, cache_timeout=None, params=None):
         if params is None:
             params = dict()
-        params['apikey'] = self._key
+        if not self.is_authenticated():
+            params['apikey'] = self._key
         if limit is not None:
             params['limit'] = limit
             if offset is not None:
-                params['offset'] = limit
+                params['offset'] = offset
         items = []
         for item in self.get_json(obj, params, cache_timeout):
             items.append(model(item))
