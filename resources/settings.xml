@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <category label="30000">
-        <setting label="30001" type="text" id="api_key" default="22Q1bFiwGxYA2eaG4vVAGsJqi3SQWzmd"/>
-        <setting label="30002" type="text" id="api_secret" option="hidden" enable="!eq(-1,)" default="Z1AAYBC1JEtnMJGm"/>
-        <setting label="30003" type="bool" id="api_debug" default="false"/>
-    </category>
     <category label="30010">
         <setting label="30011" type="text" id="username" default=""/>
         <setting label="30012" type="text" id="password" option="hidden" enable="!eq(-1,)" default=""/>
     </category>
-    <category label="30020">
-        <setting label="30021" type="bool" id="hide_compilations" default="true"/>
+    <category label="30000">
+        <setting label="30001" type="text" id="api_key" default="22Q1bFiwGxYA2eaG4vVAGsJqi3SQWzmd"/>
+        <setting label="30002" type="text" id="api_secret" option="hidden" enable="!eq(-1,)" default="Z1AAYBC1JEtnMJGm"/>
+        <setting label="30003" type="bool" id="api_debug" default="false"/>
     </category>
 </settings>

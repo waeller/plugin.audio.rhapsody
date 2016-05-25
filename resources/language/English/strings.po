@@ -4,15 +4,15 @@ msgstr ""
 # Settings
 
 msgctxt "#30000"
-msgid "API"
+msgid "Advanced"
 msgstr ""
 
 msgctxt "#30001"
-msgid "Consumer Key"
+msgid "API Consumer Key"
 msgstr ""
 
 msgctxt "#30002"
-msgid "Consumer Secret"
+msgid "API Consumer Secret"
 msgstr ""
 
 msgctxt "#30003"
@@ -29,14 +29,6 @@ msgstr ""
 
 msgctxt "#30012"
 msgid "Password"
-msgstr ""
-
-msgctxt "#30020"
-msgid "Albums"
-msgstr ""
-
-msgctxt "#30021"
-msgid "Hide compilations"
 msgstr ""
 
 # Messages
