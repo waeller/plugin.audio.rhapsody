@@ -14,7 +14,7 @@ class Streams(MetadataDetail):
     detail_class = Detail
     cache_timeout = 300
 
-    def detail(self, obj_id):
+    def detail(self, obj_id, **kwargs):
         if not self._api.is_authenticated():
             raise exceptions.StreamingRightsError
         if not self._api.account.can_stream_on_home_device:
