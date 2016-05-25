@@ -214,7 +214,7 @@ def artists_similar(artist_id):
     items = []
     similar = rhapsody.artists.similar(artist_id)
     for artist in similar.contemporaries + similar.followers + similar.influencers + similar.related:
-        items.append(helpers.get_artist_item(artist, in_library=True))
+        items.append(helpers.get_artist_item(artist))
     return items
 
 
