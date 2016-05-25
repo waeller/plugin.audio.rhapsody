@@ -191,19 +191,18 @@ def artists_library_remove(artist_id):
 
 @plugin.route('/artists/<artist_id>/albums')
 def artists_detail(artist_id):
+    items = []
     try:
         album_type = int(plugin.request.args['album_type'][0])
     except (KeyError, ValueError):
-        album_type = 0
-    items = []
-    if album_type == 0:
+        album_type = rhapsody.albums.TYPE_MAIN_RELEASE
         items.append({
             'label': '[B]Singles + EPs[/B]',
-            'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=1)
+            'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=rhapsody.albums.TYPE_SINGLE_EP)
         })
         items.append({
             'label': '[B]Compilations[/B]',
-            'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=2)
+            'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=rhapsody.albums.TYPE_COMPILATION)
         })
     for album in filter(lambda x: x.type.id == album_type, rhapsody.artists.albums(artist_id)):
         items.append(helpers.get_album_item(album, show_artist=False))

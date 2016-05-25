@@ -37,6 +37,10 @@ class Detail(List):
 
 
 class Albums(MetadataList, MetadataDetail):
+    TYPE_MAIN_RELEASE = 0
+    TYPE_SINGLE_EP = 1
+    TYPE_COMPILATION = 2
+
     url_base = 'albums'
     list_class = List
     detail_class = Detail
