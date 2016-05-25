@@ -197,12 +197,14 @@ def artists_detail(artist_id):
         album_type = 0
     items = []
     if album_type == 0:
-        items.append(
-            {'label': '[B]Singles + EPs[/B]', 'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=1)}
-        )
-        items.append(
-            {'label': '[B]Compilations[/B]', 'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=2)}
-        )
+        items.append({
+            'label': '[B]Singles + EPs[/B]',
+            'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=1)
+        })
+        items.append({
+            'label': '[B]Compilations[/B]',
+            'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=2)
+        })
     for album in filter(lambda x: x.type.id == album_type, rhapsody.artists.albums(artist_id)):
         items.append(helpers.get_album_item(album, show_artist=False))
     return items

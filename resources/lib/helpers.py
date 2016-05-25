@@ -3,7 +3,6 @@ from xbmcswift2 import actions
 from rhapsody import exceptions
 from rhapsody.api import API
 from rhapsody.cache import Base as BaseCache
-from rhapsody.models.artists import Artists
 from rhapsody.models.common import Image
 
 
