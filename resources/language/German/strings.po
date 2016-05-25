@@ -183,6 +183,10 @@ msgctxt "#30255"
 msgid "More from {0:s}"
 msgstr "Mehr von {0:s}"
 
+msgctxt "#30256"
+msgid "Similar artists"
+msgstr "Ähnliche Künstler"
+
 msgctxt "#30260"
 msgid "Popular"
 msgstr "Beliebt"
