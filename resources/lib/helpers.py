@@ -60,10 +60,9 @@ class Helpers:
         return item
 
     def get_album_item(self, album, show_artist=True, in_library=False, library_artist_id=None):
+        label = album.name + ' (' + str(album.get_release_date().year) + ')'
         if show_artist:
-            label = album.artist.name + ' - ' + album.name + ' (' + str(album.get_release_date().year) + ')'
-        else:
-            label = album.name + ' (' + str(album.get_release_date().year) + ')'
+            label += '[LIGHT] / ' + album.artist.name + '[/LIGHT]'
         item = {
             'label': label,
             'thumbnail': Image.get_url(Image.TYPE_ALBUM, album.id, Image.SIZE_ALBUM_ORIGINAL),
@@ -128,13 +127,11 @@ class Helpers:
 
     def get_track_item(self, track, track_number=None, show_artist=True, in_library=False, in_favorites=False,
                        in_playlists=False, playlist_id=None, library_album_id=None):
+        label = track.name
         if show_artist:
-            label = track.artist.name + ' - ' + track.name
-        else:
-            label = track.name
+            label += '[LIGHT] / ' + track.artist.name + '[/LIGHT]'
         item = {
             'label': label,
-            'label2': track.artist.name,
             'is_playable': True,
             'info': {
                 'title': track.name,
