@@ -3,6 +3,7 @@ from xbmcswift2 import actions
 from rhapsody import exceptions
 from rhapsody.api import API
 from rhapsody.cache import Base as BaseCache
+from rhapsody.models.artists import Artists
 from rhapsody.models.common import Image
 
 
@@ -40,6 +41,11 @@ class Helpers:
             },
             'context_menu': [],
         }
+
+        item['context_menu'].append((
+            self._plugin.get_string(30256),
+            actions.update_view(self._plugin.url_for('artists_similar', artist_id=artist.id))))
+
         if in_library:
             item['path'] = self._plugin.url_for('artists_library_albums', artist_id=artist.id)
             item['context_menu'].append((
@@ -50,6 +56,7 @@ class Helpers:
             item['context_menu'].append((
                 self._plugin.get_string(30215),
                 actions.background(self._plugin.url_for('artists_library_add', artist_id=artist.id))))
+
         return item
 
     def get_album_item(self, album, show_artist=True, in_library=False, library_artist_id=None):
@@ -119,7 +126,7 @@ class Helpers:
             ]
         return item
 
-    def get_track_item(self, track, show_artist=True, in_library=False, in_favorites=False,
+    def get_track_item(self, track, track_number=None, show_artist=True, in_library=False, in_favorites=False,
                        in_playlists=False, playlist_id=None, library_album_id=None):
         if show_artist:
             label = track.artist.name + ' - ' + track.name
@@ -127,6 +134,7 @@ class Helpers:
             label = track.name
         item = {
             'label': label,
+            'label2': track.artist.name,
             'is_playable': True,
             'info': {
                 'title': track.name,
@@ -140,6 +148,8 @@ class Helpers:
             },
             'context_menu': []
         }
+        if track_number is not None:
+            item['info']['tracknumber'] = track_number
         item['context_menu'].append((
             self._plugin.get_string(30255).format(track.artist.name),
             actions.update_view(self._plugin.url_for('artists_detail', artist_id=track.artist.id))
@@ -182,11 +192,17 @@ class Helpers:
                                                             track_id=track.id, playlist_id=playlist.id))))
 
         item['path'] = self._plugin.url_for(
-                'play',
-                track_id=track.id,
-                album_id=track.album.id,
-                duration=track.duration)
+            'play',
+            track_id=track.id,
+            album_id=track.album.id,
+            duration=track.duration)
         return item
+
+    def get_track_items(self, tracks, **kwargs):
+        items = []
+        for x in range(len(tracks)):
+            items.append(self.get_track_item(tracks[x], track_number=(x + 1), **kwargs))
+        return items
 
     def refresh_playlists(self):
         playlists = self._api.library.playlists()

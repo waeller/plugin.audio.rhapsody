@@ -10,7 +10,13 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Plugin for Rhapsody/Napster/MTV-Music</summary>
-        <description lang="en"></description>
+        <description lang="en">
+
+        </description>
+        <summary lang="de">Plugin für Rhapsody/Napster/MTV-Music</summary>
+        <description lang="de">
+
+        </description>
         <disclaimer/>
         <language>en de</language>
         <platform>all</platform>

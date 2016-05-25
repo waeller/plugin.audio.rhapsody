@@ -34,5 +34,7 @@ class MetadataDetail(Metadata):
     url_base = ''
     detail_class = Detail
 
-    def detail(self, obj_id):
-        return self._api.get_detail(self.detail_class, self.url_base, obj_id, cache_timeout=self.cache_timeout)
+    def detail(self, obj_id, model=None):
+        if model is None:
+            model = self.detail_class
+        return self._api.get_detail(model, self.url_base, obj_id, cache_timeout=self.cache_timeout)

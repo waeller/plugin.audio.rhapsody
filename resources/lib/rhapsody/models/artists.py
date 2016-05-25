@@ -18,6 +18,13 @@ class Detail(Base):
 
 
 class Artists(MetadataList, MetadataDetail):
+    class Similar(object):
+        def __init__(self, data):
+            self.contemporaries = [Detail(x) for x in data['contemporaries']]
+            self.followers = [Detail(x) for x in data['followers']]
+            self.influencers = [Detail(x) for x in data['influencers']]
+            self.related = [Detail(x) for x in data['related']]
+
     url_base = 'artists'
     list_class = List
     detail_class = Detail
@@ -26,3 +33,6 @@ class Artists(MetadataList, MetadataDetail):
         import albums
 
         return self.list(artist_id + '/albums', model=albums.List)
+
+    def similar(self, artist_id):
+        return self.detail(artist_id + '/similar', model=Artists.Similar)
