@@ -135,6 +135,34 @@ msgctxt "#30231"
 msgid "Recent Tracks"
 msgstr ""
 
+msgctxt "#30232"
+msgid "Most Played Artists"
+msgstr ""
+
+msgctxt "#30233"
+msgid "Most Played Albums"
+msgstr ""
+
+msgctxt "#30234"
+msgid "Most Played Tracks"
+msgstr ""
+
+msgctxt "#30235"
+msgid "This Week"
+msgstr ""
+
+msgctxt "#30236"
+msgid "This Month"
+msgstr ""
+
+msgctxt "#30237"
+msgid "This Year"
+msgstr ""
+
+msgctxt "#30238"
+msgid "All-Time"
+msgstr ""
+
 msgctxt "#30240"
 msgid "Search"
 msgstr ""

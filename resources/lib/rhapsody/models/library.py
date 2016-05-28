@@ -2,6 +2,16 @@ import json
 
 
 class Library(object):
+    MOST_PLAYED_WEEK = 'week'
+    MOST_PLAYED_MONTH = 'month'
+    MOST_PLAYED_YEAR = 'year'
+    MOST_PLAYED_LIFE = 'life'
+
+    class MostPlayed(object):
+        def __init__(self, data):
+            self.id = data['id']
+            self.play_count = data['playCount']
+
     def __init__(self, api):
         self._api = api
 
@@ -50,6 +60,42 @@ class Library(object):
         from rhapsody.models import tracks
 
         return self._api.get_list(tracks.List, 'me/listens', limit, offset, cache_timeout=None)
+
+    def most_played_artists(self, range_choice=MOST_PLAYED_WEEK, limit=None, offset=None):
+        return self._api.get_list(
+            Library.MostPlayed,
+            'me/charts/artists',
+            limit,
+            offset,
+            cache_timeout=None,
+            params={
+                'range': range_choice
+            }
+        )
+
+    def most_played_albums(self, range_choice=MOST_PLAYED_WEEK, limit=None, offset=None):
+        return self._api.get_list(
+            Library.MostPlayed,
+            'me/charts/albums',
+            limit,
+            offset,
+            cache_timeout=None,
+            params={
+                'range': range_choice
+            }
+        )
+
+    def most_played_tracks(self, range_choice=MOST_PLAYED_WEEK, limit=None, offset=None):
+        return self._api.get_list(
+            Library.MostPlayed,
+            'me/charts/tracks',
+            limit,
+            offset,
+            cache_timeout=None,
+            params={
+                'range': range_choice
+            }
+        )
 
     def playlists(self, limit=100, offset=0):
         from rhapsody.models import playlists

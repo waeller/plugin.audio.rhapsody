@@ -144,6 +144,9 @@ def recent():
     return [
         {'label': _(30230), 'path': plugin.url_for('artists_recent')},
         {'label': _(30231), 'path': plugin.url_for('tracks_recent')},
+        {'label': _(30232), 'path': plugin.url_for('artists_most_played')},
+        {'label': _(30233), 'path': plugin.url_for('albums_most_played')},
+        {'label': _(30234), 'path': plugin.url_for('tracks_most_played')},
     ]
 
 
@@ -160,6 +163,39 @@ def artists_recent():
     items = []
     for artist in rhapsody.library.recent_artists():
         items.append(helpers.get_artist_item(artist))
+    return items
+
+
+@plugin.route('/artists/charts')
+def artists_most_played():
+    range_choice = plugin.request.args.get('range_choice', [None])[0]
+    if range_choice is not None:
+        items = []
+        for most_played in rhapsody.library.most_played_artists(range_choice):
+            try:
+                artist = rhapsody.artists.detail(most_played.id)
+                items.append(helpers.get_artist_item(artist))
+            except exceptions.ResourceNotFoundError:
+                pass
+    else:
+        items = [
+            {
+                'label': _(30235),
+                'path': plugin.url_for('artists_most_played', range_choice=rhapsody.library.MOST_PLAYED_WEEK)
+            },
+            {
+                'label': _(30236),
+                'path': plugin.url_for('artists_most_played', range_choice=rhapsody.library.MOST_PLAYED_MONTH)
+            },
+            {
+                'label': _(30237),
+                'path': plugin.url_for('artists_most_played', range_choice=rhapsody.library.MOST_PLAYED_YEAR)
+            },
+            {
+                'label': _(30238),
+                'path': plugin.url_for('artists_most_played', range_choice=rhapsody.library.MOST_PLAYED_LIFE)
+            },
+        ]
     return items
 
 
@@ -374,6 +410,39 @@ def albums_picks():
     return items
 
 
+@plugin.route('/albums/charts')
+def albums_most_played():
+    range_choice = plugin.request.args.get('range_choice', [None])[0]
+    if range_choice is not None:
+        items = []
+        for most_played in rhapsody.library.most_played_albums(range_choice):
+            try:
+                album = rhapsody.albums.detail(most_played.id)
+                items.append(helpers.get_album_item(album))
+            except exceptions.ResourceNotFoundError:
+                pass
+    else:
+        items = [
+            {
+                'label': _(30235),
+                'path': plugin.url_for('albums_most_played', range_choice=rhapsody.library.MOST_PLAYED_WEEK)
+            },
+            {
+                'label': _(30236),
+                'path': plugin.url_for('albums_most_played', range_choice=rhapsody.library.MOST_PLAYED_MONTH)
+            },
+            {
+                'label': _(30237),
+                'path': plugin.url_for('albums_most_played', range_choice=rhapsody.library.MOST_PLAYED_YEAR)
+            },
+            {
+                'label': _(30238),
+                'path': plugin.url_for('albums_most_played', range_choice=rhapsody.library.MOST_PLAYED_LIFE)
+            },
+        ]
+    return items
+
+
 @plugin.route('/albums/library')
 def albums_library():
     items = []
@@ -422,6 +491,39 @@ def tracks_top():
 @plugin.route('/tracks/recent')
 def tracks_recent():
     items = helpers.get_track_items(rhapsody.library.recent_tracks())
+    return items
+
+
+@plugin.route('/tracks/charts')
+def tracks_most_played():
+    range_choice = plugin.request.args.get('range_choice', [None])[0]
+    if range_choice is not None:
+        items = []
+        for most_played in rhapsody.library.most_played_tracks(range_choice):
+            try:
+                track = rhapsody.tracks.detail(most_played.id)
+                items.append(helpers.get_track_item(track))
+            except exceptions.ResourceNotFoundError:
+                pass
+    else:
+        items = [
+            {
+                'label': _(30235),
+                'path': plugin.url_for('tracks_most_played', range_choice=rhapsody.library.MOST_PLAYED_WEEK)
+            },
+            {
+                'label': _(30236),
+                'path': plugin.url_for('tracks_most_played', range_choice=rhapsody.library.MOST_PLAYED_MONTH)
+            },
+            {
+                'label': _(30237),
+                'path': plugin.url_for('tracks_most_played', range_choice=rhapsody.library.MOST_PLAYED_YEAR)
+            },
+            {
+                'label': _(30238),
+                'path': plugin.url_for('tracks_most_played', range_choice=rhapsody.library.MOST_PLAYED_LIFE)
+            },
+        ]
     return items
 
 
