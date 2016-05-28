@@ -460,10 +460,16 @@ def play(track_id):
     item = helpers.get_track_item(track)
     item['path'] = stream.url
 
+    import play
+    notify = play.Notify(rhapsody, track, stream)
+    player = play.Player(plugin=plugin, notify=notify)
     plugin.set_resolved_url(item)
 
-    started = rhapsody.events.log_playstart(track_id, stream)
-    rhapsody.events.log_playstop(track_id, stream, started, track.duration)
+    import xbmc
+    while not xbmc.abortRequested and not player.has_stopped:
+        xbmc.sleep(10)
+
+    plugin.log.info('Player: Exited')
 
 
 if __name__ == '__main__':
