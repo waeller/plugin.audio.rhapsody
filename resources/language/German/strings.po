@@ -77,7 +77,7 @@ msgstr "Entdecken"
 
 msgctxt "#30203"
 msgid "Listening History"
-msgstr "Zuletzt gehört"
+msgstr "Historie"
 
 msgctxt "#30210"
 msgid "My Artists"
