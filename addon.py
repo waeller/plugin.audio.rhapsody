@@ -238,7 +238,7 @@ def artists_library_albums(artist_id):
 
     for album in filter(lambda x: x.type.id == album_type, rhapsody.library.artist_albums(artist_id)):
         items.append(helpers.get_album_item(album, show_artist=False, in_library=True, library_artist_id=artist_id))
-        
+
     return items
 
 
@@ -533,10 +533,12 @@ def tracks_most_played():
     range_choice = plugin.request.args.get('range_choice', [None])[0]
     if range_choice is not None:
         items = []
-        for most_played in rhapsody.library.most_played_tracks(range_choice):
+        for most_played in rhapsody.library.most_played_tracks(range_choice, limit=1000)[:50]:
             try:
                 track = rhapsody.tracks.detail(most_played.id)
                 items.append(helpers.get_track_item(track))
+                if len(items) >= 20:
+                    break
             except exceptions.ResourceNotFoundError:
                 pass
     else:
