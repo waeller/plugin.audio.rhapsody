@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 from cStringIO import StringIO
 
 from xbmcswift2 import Plugin
@@ -36,6 +37,8 @@ def discover():
         {'label': _(30262), 'path': plugin.url_for('albums_new')},
         {'label': _(30263), 'path': plugin.url_for('albums_picks')},
         {'label': _(30264), 'path': plugin.url_for('playlists_featured')},
+        {'label': _(30266), 'path': plugin.url_for('stations_top')},
+        {'label': _(30267), 'path': plugin.url_for('stations_decade')},
     ]
 
 
@@ -68,6 +71,7 @@ def genres_detail(genre_id):
         {'label': _(30221), 'path': plugin.url_for('genres_albums_top', genre_id=genre_id)},
         {'label': _(30222), 'path': plugin.url_for('genres_tracks_top', genre_id=genre_id)},
         {'label': _(30262), 'path': plugin.url_for('genres_albums_new', genre_id=genre_id)},
+        {'label': _(30266), 'path': plugin.url_for('genres_stations', genre_id=genre_id)},
         {'label': _(30265), 'path': plugin.url_for('genres', parent_genre_id=genre_id)},
     ]
 
@@ -101,6 +105,11 @@ def genres_albums_new(genre_id):
     for album in rhapsody.genres.new_albums(genre_id):
         items.append(helpers.get_album_item(album))
     return items
+
+
+@plugin.route('/genres/<genre_id>/stations')
+def genres_stations(genre_id):
+    return helpers.get_station_items(rhapsody.genres.stations(genre_id))
 
 
 @plugin.route('/search')
@@ -306,6 +315,45 @@ def playlists_detail(playlist_id):
     return items
 
 
+@plugin.route('/stations/top')
+def stations_top():
+    return helpers.get_station_items(rhapsody.stations.top())
+
+
+@plugin.route('/stations/decade')
+def stations_decade():
+    return helpers.get_station_items(rhapsody.stations.decade())
+
+
+@plugin.route('/stations/<station_id>/detail')
+def stations_detail(station_id):
+    station = rhapsody.stations.detail(station_id)
+    items = [{
+        'label': _(30268).format(station.name),
+        'is_playable': True,
+        'path': plugin.url_for('stations_play', station_id=station_id)
+    }]
+    return items
+
+
+@plugin.route('/stations/<station_id>/play')
+def stations_play(station_id):
+    current_track_id = plugin.request.args.get('current_track_id', [None])[0]
+    if current_track_id is None:
+        current_track_id = rhapsody.stations.tracks(station_id).tracks[0].id
+
+    for next_track in rhapsody.stations.tracks(station_id).tracks:
+        next_item = helpers.get_track_item(next_track)
+        next_item['path'] = plugin.url_for(
+            'stations_play',
+            station_id=station_id,
+            current_track_id=next_track.id
+        )
+        plugin.add_to_playlist([next_item], playlist='music')
+
+    play(track_id=current_track_id)
+
+
 @plugin.route('/albums/top')
 def albums_top():
     items = []
@@ -406,21 +454,16 @@ def tracks_library_remove(track_id):
 
 @plugin.route('/play/<track_id>')
 def play(track_id):
-    from rhapsody.models.common import Image
-
-    album_id = plugin.request.args.get('album_id', [False])[0]
-    duration = plugin.request.args.get('duration', [False])[0]
-
-    item = dict()
-
-    item['thumbnail'] = Image.get_url(Image.TYPE_ALBUM, album_id, Image.SIZE_ALBUM_ORIGINAL)
-
+    track = rhapsody.tracks.detail(track_id)
     stream = rhapsody.streams.detail(track_id)
+
+    item = helpers.get_track_item(track)
     item['path'] = stream.url
+
     plugin.set_resolved_url(item)
 
     started = rhapsody.events.log_playstart(track_id, stream)
-    rhapsody.events.log_playstop(track_id, stream, started, duration)
+    rhapsody.events.log_playstop(track_id, stream, started, track.duration)
 
 
 if __name__ == '__main__':
@@ -448,14 +491,25 @@ if __name__ == '__main__':
     except exceptions.RequestError:
         plugin.notify(_(30103).encode('utf-8'))
         plugin.log.error(sys.stdout.getvalue())
+        exit(1)
     except exceptions.ResourceNotFoundError:
         plugin.notify(_(30104).encode('utf-8'))
         plugin.log.error(sys.stdout.getvalue())
+        exit(1)
     except exceptions.ResponseError:
         plugin.notify(_(30105).encode('utf-8'))
         plugin.log.error(sys.stdout.getvalue())
+        exit(1)
     except exceptions.StreamingRightsError:
         plugin.notify(_(30106).encode('utf-8'))
         plugin.log.error(sys.stdout.getvalue())
+        exit(1)
+    except Exception as e:
+        plugin.log.error(sys.stdout.getvalue())
+        traceback.print_exc()
+        plugin.notify(e)
+        exit(1)
 
     plugin.log.info(sys.stdout.getvalue())
+    plugin.finish()
+    exit(0)

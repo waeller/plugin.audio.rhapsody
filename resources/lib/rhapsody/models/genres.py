@@ -23,9 +23,6 @@ class Genres(MetadataList, MetadataDetail):
     list_class = List
     detail_class = Detail
 
-    def top(self):
-        raise NotImplementedError
-
     def find(self, genre_id, genre_list=None):
         if genre_list is None:
             genre_list = self.list()
@@ -51,3 +48,7 @@ class Genres(MetadataList, MetadataDetail):
     def new_albums(self, genre_id):
         from rhapsody.models import albums
         return self.list(genre_id + '/albums/new', albums.List)
+
+    def stations(self, genre_id):
+        from rhapsody.models import stations
+        return self.list(genre_id + '/stations', stations.List)

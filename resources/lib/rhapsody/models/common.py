@@ -7,6 +7,7 @@ class Image(MetadataDetail.Detail, object):
     TYPE_PLAYLIST = 'http://direct.rhapsody.com/imageserver/v2/playlists/{0:s}/artists/images/{1:s}.{2:s}'
     TYPE_GENRE = 'http://direct.rhapsody.com/imageserver/images/{0:s}/{1:s}.{2:s}'
     TYPE_IMAGESET = 'http://direct.rhapsody.com/imageserver/v2/imagesets/{0:s}/images/{1:s}.{2:s}'
+    TYPE_STATION = 'http://direct.rhapsody.com/imageserver/v2/stations/{0:s}/images/{1:s}.{2:s}'
 
     SIZE_ARTIST_TINY = '70x47'
     SIZE_ARTIST_SMALL = '150x100'
@@ -33,6 +34,12 @@ class Image(MetadataDetail.Detail, object):
     SIZE_IMAGESET_MEDIUM = '200x200'
     SIZE_IMAGESET_LARGE = '300x300'
     SIZE_IMAGESET_ORIGINAL = '500x500'
+
+    SIZE_STATION_TINY = '70x70'
+    SIZE_STATION_SMALL = '170x170'
+    SIZE_STATION_MEDIUM = '200x200'
+    SIZE_STATION_LARGE = '300x300'
+    SIZE_STATION_ORIGINAL = '1800x600'
 
     FORMAT_JPEG = 'jpg'
     FORMAT_PNG = 'png'

@@ -187,17 +187,29 @@ class Helpers:
                     actions.background(self._plugin.url_for('playlists_library_add_track',
                                                             track_id=track.id, playlist_id=playlist.id))))
 
-        item['path'] = self._plugin.url_for(
-            'play',
-            track_id=track.id,
-            album_id=track.album.id,
-            duration=track.duration)
+        item['path'] = self._plugin.url_for('play', track_id=track.id)
         return item
 
     def get_track_items(self, tracks, **kwargs):
         items = []
         for x in range(len(tracks)):
             items.append(self.get_track_item(tracks[x], track_number=(x + 1), **kwargs))
+        return items
+
+    def get_station_item(self, station):
+        return {
+            'label': station.name,
+            'thumbnail': Image.get_url(Image.TYPE_STATION, station.id, Image.SIZE_STATION_ORIGINAL),
+            'properties': {
+                'fanart_image': Image.get_url(Image.TYPE_STATION, station.id, Image.SIZE_STATION_ORIGINAL),
+            },
+            'path': self._plugin.url_for('stations_detail', station_id=station.id)
+        }
+
+    def get_station_items(self, stations):
+        items = []
+        for x in range(len(stations)):
+            items.append(self.get_station_item(stations[x]))
         return items
 
     def refresh_playlists(self):

@@ -48,6 +48,9 @@ class Albums(MetadataList, MetadataDetail):
     def new(self):
         return self.list('new')
 
+    def top(self):
+        return self.list('top')
+
     def picks(self):
         return self.list('picks')
 

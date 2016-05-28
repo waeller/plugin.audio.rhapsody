@@ -29,10 +29,13 @@ class Artists(MetadataList, MetadataDetail):
     list_class = List
     detail_class = Detail
 
+    def top(self):
+        return self.list('top')
+
     def albums(self, artist_id):
         import albums
 
-        return self.list(artist_id + '/albums', model=albums.List)
+        return self.list(artist_id + '/albums', limit=1000, model=albums.List)
 
     def similar(self, artist_id):
         return self.detail(artist_id + '/similar', model=Artists.Similar)

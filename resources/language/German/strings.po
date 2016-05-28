@@ -202,3 +202,15 @@ msgstr "Wiedergabelisten"
 msgctxt "#30265"
 msgid "Subgenres"
 msgstr "Untergenres"
+
+msgctxt "#30266"
+msgid "Top Stations"
+msgstr "Top Radiostationen"
+
+msgctxt "#30267"
+msgid "Stations by decade"
+msgstr "Radiostationen nach Jahrzehnt"
+
+msgctxt "#30268"
+msgid "Play [B]{0:s}[/B]"
+msgstr "Station [B]{0:s}[/B] abspielen"

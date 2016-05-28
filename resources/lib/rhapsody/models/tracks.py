@@ -5,7 +5,13 @@ class Base(object):
     def __init__(self, data):
         self.id = data['id']
         self.name = data['name']
-        self.duration = data['duration']
+        try:
+            self.duration = data['duration']
+        except KeyError:
+            try:
+                self.duration = data['playbackSeconds']
+            except KeyError:
+                self.duration = None
 
 
 class List(Base):
@@ -27,3 +33,6 @@ class Tracks(MetadataList, MetadataDetail):
     url_base = 'tracks'
     list_class = List
     detail_class = Detail
+
+    def top(self):
+        return self.list('top')

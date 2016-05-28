@@ -13,17 +13,14 @@ class MetadataList(Metadata):
 
     list_class = List
 
-    def list(self, name=None, model=None):
+    def list(self, name=None, model=None, limit=None, offset=None):
         if name is not None:
             url = self.url_base + '/' + name
         else:
             url = self.url_base
         if model is None:
             model = self.list_class
-        return self._api.get_list(model, url, limit=100, cache_timeout=self.cache_timeout)
-
-    def top(self):
-        return self.list('top')
+        return self._api.get_list(model, url, limit=limit, offset=offset, cache_timeout=self.cache_timeout)
 
 
 class MetadataDetail(Metadata):
