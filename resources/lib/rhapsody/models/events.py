@@ -23,7 +23,8 @@ class Events(object):
 
     def log_playstop(self, track_id, stream, started, duration=None):
         if duration is None:
-            duration = (datetime.now() - started).seconds
+            td = (datetime.utcnow() - started)
+            duration = (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
         data = {
             'type': 'playbackStop',
             'duration': duration,
