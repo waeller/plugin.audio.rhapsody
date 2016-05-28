@@ -6,6 +6,9 @@ class Base(object):
         self.id = data['id']
         self.name = data['name']
 
+    def get_station_id(self):
+        return self.id.lower().replace('art.', 'sas.')
+
 
 class List(Base):
     def __init__(self, data):

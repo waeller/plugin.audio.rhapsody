@@ -196,9 +196,9 @@ class Helpers:
             items.append(self.get_track_item(tracks[x], track_number=(x + 1), **kwargs))
         return items
 
-    def get_station_item(self, station):
+    def get_station_item(self, station, label=None):
         return {
-            'label': station.name,
+            'label': (label or station.name),
             'thumbnail': Image.get_url(Image.TYPE_STATION, station.id, Image.SIZE_STATION_ORIGINAL),
             'properties': {
                 'fanart_image': Image.get_url(Image.TYPE_STATION, station.id, Image.SIZE_STATION_ORIGINAL),
@@ -206,10 +206,10 @@ class Helpers:
             'path': self._plugin.url_for('stations_detail', station_id=station.id)
         }
 
-    def get_station_items(self, stations):
+    def get_station_items(self, stations, **kwargs):
         items = []
         for x in range(len(stations)):
-            items.append(self.get_station_item(stations[x]))
+            items.append(self.get_station_item(stations[x], **kwargs))
         return items
 
     def refresh_playlists(self):

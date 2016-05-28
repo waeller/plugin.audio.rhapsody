@@ -7,8 +7,14 @@ class Base(object):
         self.name = data['name']
         self.type = data['type']
         self.artists = data['artists']
-        self.summary = data['summary']
-        self.description = data['description']
+        try:
+            self.summary = data['summary']
+        except KeyError:
+            self.summary = None
+        try:
+            self.description = data['description']
+        except KeyError:
+            self.description = None
         self.images = data['images']
 
 

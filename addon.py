@@ -210,8 +210,35 @@ def artists_library():
 @plugin.route('/artists/library/<artist_id>/albums')
 def artists_library_albums(artist_id):
     items = []
-    for album in rhapsody.library.artist_albums(artist_id):
+
+    try:
+        album_type = int(plugin.request.args['album_type'][0])
+    except (KeyError, ValueError):
+        artist = rhapsody.artists.detail(artist_id)
+        station = rhapsody.stations.detail(artist.get_station_id())
+        items.append(helpers.get_station_item(station, label=u'[B]{0:s}[/B]'.format(_(30244))))
+
+        album_type = rhapsody.albums.TYPE_MAIN_RELEASE
+        items.append({
+            'label': u'[B]{0:s}[/B]'.format(_(30245)),
+            'path': plugin.url_for(
+                'artists_library_albums',
+                artist_id=artist_id,
+                album_type=rhapsody.albums.TYPE_SINGLE_EP
+            )
+        })
+        items.append({
+            'label': u'[B]{0:s}[/B]'.format(_(30246)),
+            'path': plugin.url_for(
+                'artists_library_albums',
+                artist_id=artist_id,
+                album_type=rhapsody.albums.TYPE_COMPILATION
+            )
+        })
+
+    for album in filter(lambda x: x.type.id == album_type, rhapsody.library.artist_albums(artist_id)):
         items.append(helpers.get_album_item(album, show_artist=False, in_library=True, library_artist_id=artist_id))
+        
     return items
 
 
@@ -236,20 +263,27 @@ def artists_library_remove(artist_id):
 @plugin.route('/artists/<artist_id>/albums')
 def artists_detail(artist_id):
     items = []
+
     try:
         album_type = int(plugin.request.args['album_type'][0])
     except (KeyError, ValueError):
+        artist = rhapsody.artists.detail(artist_id)
+        station = rhapsody.stations.detail(artist.get_station_id())
+        items.append(helpers.get_station_item(station, label=u'[B]{0:s}[/B]'.format(_(30244))))
+
         album_type = rhapsody.albums.TYPE_MAIN_RELEASE
         items.append({
-            'label': '[B]Singles + EPs[/B]',
+            'label': u'[B]{0:s}[/B]'.format(_(30245)),
             'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=rhapsody.albums.TYPE_SINGLE_EP)
         })
         items.append({
-            'label': '[B]Compilations[/B]',
+            'label': u'[B]{0:s}[/B]'.format(_(30246)),
             'path': plugin.url_for('artists_detail', artist_id=artist_id, album_type=rhapsody.albums.TYPE_COMPILATION)
         })
+
     for album in filter(lambda x: x.type.id == album_type, rhapsody.artists.albums(artist_id)):
         items.append(helpers.get_album_item(album, show_artist=False))
+
     return items
 
 

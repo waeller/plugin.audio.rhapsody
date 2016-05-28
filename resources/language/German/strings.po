@@ -179,6 +179,18 @@ msgctxt "#30243"
 msgid "Track"
 msgstr "Titel"
 
+msgctxt "#30244"
+msgid "Artist Radio"
+msgstr "Künstler Radio"
+
+msgctxt "#30245"
+msgid "Singles + EPs"
+msgstr "Singles & EPs"
+
+msgctxt "#30246"
+msgid "Compilations"
+msgstr "Compilations"
+
 msgctxt "#30250"
 msgid "Create playlist"
 msgstr "Wiedergabeliste erstellen"
