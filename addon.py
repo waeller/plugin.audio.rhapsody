@@ -95,7 +95,6 @@ def genres_albums_top(genre_id):
 @plugin.route('/genres/<genre_id>/tracks/top')
 def genres_tracks_top(genre_id):
     items = helpers.get_track_items(rhapsody.genres.top_tracks(genre_id))
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
@@ -242,7 +241,6 @@ def favorites_remove(track_id):
 @plugin.route('/favorites')
 def favorites_library():
     items = helpers.get_track_items(rhapsody.library.favorites(), in_favorites=True)
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
@@ -292,7 +290,6 @@ def playlists_library_remove(playlist_id):
 def playlists_library_detail(playlist_id):
     playlist = rhapsody.library.playlist(playlist_id)
     items = helpers.get_track_items(playlist.tracks, in_playlists=True, playlist_id=playlist_id)
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
@@ -311,7 +308,6 @@ def playlists_library_remove_track(playlist_id, track_id):
 @plugin.route('/playlists/<playlist_id>')
 def playlists_detail(playlist_id):
     items = helpers.get_track_items(rhapsody.playlists.detail(playlist_id).tracks)
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
@@ -389,7 +385,6 @@ def albums_library():
 @plugin.route('/albums/library/<album_id>/tracks')
 def albums_library_tracks(album_id):
     items = helpers.get_track_items(rhapsody.library.album_tracks(album_id), show_artist=False, in_library=True)
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
@@ -415,28 +410,24 @@ def albums_library_remove(album_id):
 def albums_detail(album_id):
     album = rhapsody.albums.detail(album_id)
     items = helpers.get_track_items(album.tracks, show_artist=(album.type.id == 2))
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
 @plugin.route('/tracks/top')
 def tracks_top():
     items = helpers.get_track_items(rhapsody.tracks.top())
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
 @plugin.route('/tracks/recent')
 def tracks_recent():
     items = helpers.get_track_items(rhapsody.library.recent_tracks())
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
 @plugin.route('/tracks/library')
 def tracks_library():
     items = helpers.get_track_items(rhapsody.library.tracks(), in_library=True)
-    plugin.add_to_playlist(items, playlist='music')
     return items
 
 
