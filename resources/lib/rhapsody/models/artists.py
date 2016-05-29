@@ -8,7 +8,7 @@ class Artists(MetadataList, MetadataDetail):
             self.name = data['name']
 
         def get_station_id(self):
-            return self.id.lower().replace('art.', 'sas.')
+            return Artists.get_station_id(self.id)
 
     class List(Base):
         def __init__(self, data):
@@ -39,3 +39,7 @@ class Artists(MetadataList, MetadataDetail):
 
     def similar(self, artist_id):
         return self.detail(artist_id + '/similar', model=Artists.Similar)
+
+    @staticmethod
+    def get_station_id(artist_id):
+        return artist_id.lower().replace('art.', 'sas.')
