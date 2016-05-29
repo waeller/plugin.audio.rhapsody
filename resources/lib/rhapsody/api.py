@@ -25,7 +25,8 @@ class API:
     TOKEN_CACHE_LIFETIME = 60 * 60 * 24 * 7   # 7 days
     DEFAULT_CACHE_TIMEOUT = 60 * 60 * 2       # 2 hours
     MAX_RETRIES = 3
-    DEBUG = False
+    ENABLE_CACHE = True
+    ENABLE_DEBUG = False
 
     instance = None
     token = Token
@@ -115,7 +116,7 @@ class API:
         return headers
 
     def _log_response(self, response):
-        if self.DEBUG:
+        if self.ENABLE_DEBUG:
             print {
                 'request': {
                     'url': response.request.url,
@@ -194,7 +195,7 @@ class API:
         cache_key = hashlib.sha1(json.dumps(cache_data)).hexdigest()
 
         response_text = None
-        if cache_timeout is not None and not self.DEBUG and retry == 0:
+        if self.ENABLE_CACHE and cache_timeout is not None and retry == 0:
             response_text = self._cache.get(cache_key, cache_timeout)
 
         if response_text is None:
@@ -210,7 +211,7 @@ class API:
             else:
                 raise exceptions.ResponseError
 
-    def get_detail(self, model, obj, obj_id, cache_timeout=None, params=None):
+    def get_detail(self, model, obj, obj_id, cache_timeout=DEFAULT_CACHE_TIMEOUT, params=None):
         if params is None:
             params = dict()
         if not self.is_authenticated():
@@ -220,7 +221,7 @@ class API:
             data = data[0]
         return model(data)
 
-    def get_list(self, model, obj, limit=None, offset=None, cache_timeout=None, params=None):
+    def get_list(self, model, obj, limit=None, offset=None, cache_timeout=DEFAULT_CACHE_TIMEOUT, params=None):
         if params is None:
             params = dict()
         if not self.is_authenticated():
