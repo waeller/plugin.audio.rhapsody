@@ -616,7 +616,11 @@ if __name__ == '__main__':
 
     from rhapsody import exceptions
     rhapsody = helpers.get_api()
-    rhapsody.DEBUG = plugin.get_setting('api_debug', converter=bool)
+    rhapsody.ENABLE_DEBUG = plugin.get_setting('api_debug', converter=bool)
+    rhapsody.ENABLE_CACHE = not plugin.get_setting('api_cache_disable', converter=bool)
+    if not rhapsody.ENABLE_DEBUG and not rhapsody.ENABLE_CACHE:
+        rhapsody.ENABLE_CACHE = True
+        plugin.set_setting('api_cache_disable', '0')
 
     try:
         plugin.run()

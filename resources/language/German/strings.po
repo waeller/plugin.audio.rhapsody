@@ -79,6 +79,10 @@ msgctxt "#30203"
 msgid "Listening History"
 msgstr "Historie"
 
+msgctxt "#30004"
+msgid "Disable cache (not recommended)"
+msgstr "Zwischenspeicher deaktivieren (nicht empfohlen)"
+
 msgctxt "#30210"
 msgid "My Artists"
 msgstr "Meine Künstler"
