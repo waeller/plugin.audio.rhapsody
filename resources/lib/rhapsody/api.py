@@ -118,7 +118,8 @@ class API:
             print {
                 'request': {
                     'url': response.request.url,
-                    'headers': response.request.headers
+                    'headers': response.request.headers,
+                    'body': response.request.body
                 },
                 'response': {
                     'status': response.status_code,
