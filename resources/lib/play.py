@@ -1,6 +1,6 @@
 import datetime
 
-import xbmc
+from xbmcswift2 import xbmc
 
 
 class Notify(object):

@@ -208,7 +208,7 @@ msgid "Remove playlist"
 msgstr ""
 
 msgctxt "#30253"
-msgid "Add to playlist {0:s}"
+msgid "Add to playlist"
 msgstr ""
 
 msgctxt "#30254"

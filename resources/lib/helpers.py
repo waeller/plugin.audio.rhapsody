@@ -31,8 +31,7 @@ class Helpers:
 
     def __init__(self, plugin):
         self._plugin = plugin
-        self._cache = plugin.get_storage('helpers', TTL=5)
-        self._api_cache = Helpers.Cache(plugin)
+        self._cache = Helpers.Cache(plugin)
         self._api = self._get_api()
 
     def get_artist_item(self, artist, in_library=False):
@@ -116,6 +115,7 @@ class Helpers:
             }
         }
         if in_library:
+            item['path'] = self._plugin.url_for('playlists_library_detail', playlist_id=playlist.id)
             item['context_menu'] = [
                 (
                     self._plugin.get_string(30251),
@@ -181,16 +181,10 @@ class Helpers:
                 actions.update_view(self._plugin.url_for('playlists_library_remove_track',
                                                          track_id=track.id, playlist_id=playlist_id))))
         else:
-            playlists = self._cache.get('playlists', None)
-            if playlists is None:
-                playlists = [x.__dict__ for x in self._api.library.playlists()]
-                self._cache['playlists'] = playlists
-            playlists = [self._api.playlists.List(x) for x in playlists]
-            for playlist in playlists:
-                item['context_menu'].append((
-                    self._plugin.get_string(30253).format(playlist.name),
-                    actions.background(self._plugin.url_for('playlists_library_add_track',
-                                                            track_id=track.id, playlist_id=playlist.id))))
+            item['context_menu'].append((
+                self._plugin.get_string(30253),
+                actions.background(self._plugin.url_for('playlists_library_select', track_id=track.id)))
+            )
 
         item['path'] = self._plugin.url_for('play', track_id=track.id)
         return item
@@ -217,17 +211,13 @@ class Helpers:
             items.append(self.get_station_item(stations[x], **kwargs))
         return items
 
-    def refresh_playlists(self):
-        playlists = self._api.library.playlists()
-        self._cache['playlists'] = playlists
-
     def cleanup(self):
-        self._api_cache.cleanup()
+        self._cache.cleanup()
 
     def _get_api(self):
         api_key = self._plugin.get_setting('api_key', converter=unicode)
         api_secret = self._plugin.get_setting('api_secret', converter=unicode)
-        rhapsody = API(api_key, api_secret, cache_instance=self._api_cache)
+        rhapsody = API(api_key, api_secret, cache_instance=self._cache)
 
         try:
             username = self._plugin.get_setting('username', converter=unicode)

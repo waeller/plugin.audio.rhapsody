@@ -333,7 +333,6 @@ def playlists_library_add():
     name = plugin.keyboard('')
     if name is not None and len(name) > 0:
         rhapsody.library.add_playlist(name)
-        helpers.refresh_playlists()
     return plugin.finish(playlists_library(), update_listing=True)
 
 
@@ -342,15 +341,12 @@ def playlists_library_rename(playlist_id):
     name = plugin.keyboard('')
     if name is not None and len(name) > 0:
         rhapsody.library.rename_playlist(playlist_id, name)
-        helpers.refresh_playlists()
-    helpers.refresh_playlists()
     return plugin.finish(playlists_library(), update_listing=True)
 
 
 @plugin.route('/playlists/library/<playlist_id>/remove')
 def playlists_library_remove(playlist_id):
     rhapsody.library.remove_playlist(playlist_id)
-    helpers.refresh_playlists()
     return plugin.finish(playlists_library(), update_listing=True)
 
 
@@ -359,6 +355,17 @@ def playlists_library_detail(playlist_id):
     playlist = rhapsody.library.playlist(playlist_id)
     items = helpers.get_track_items(playlist.tracks, in_playlists=True, playlist_id=playlist_id)
     return items
+
+
+@plugin.route('/playlists/library/select/<track_id>')
+def playlists_library_select(track_id):
+    from xbmcswift2 import xbmcgui
+
+    playlists = rhapsody.library.playlists()
+    idx = xbmcgui.Dialog().select(_(30214), [x.name for x in playlists])
+    if idx >= 0:
+        playlist = playlists[idx]
+        plugin.redirect(plugin.url_for('playlists_library_add_track', track_id=track_id, playlist_id=playlist.id))
 
 
 @plugin.route('/playlists/library/<playlist_id>/add/<track_id>')

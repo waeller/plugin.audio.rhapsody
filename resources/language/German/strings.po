@@ -208,8 +208,8 @@ msgid "Remove playlist"
 msgstr "Wiedergabeliste löschen"
 
 msgctxt "#30253"
-msgid "Add to playlist {0:s}"
-msgstr "Zu Wiedergabeliste {0:s} hinzufügen"
+msgid "Add to playlist"
+msgstr "Zur Wiedergabeliste hinzufügen"
 
 msgctxt "#30254"
 msgid "Remove from playlist"
