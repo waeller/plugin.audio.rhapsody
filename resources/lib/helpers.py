@@ -26,9 +26,13 @@ class Helpers:
             storage = self.get_storage(timeout)
             storage[key] = value
 
+        def cleanup(self):
+            del self._plugin
+
     def __init__(self, plugin):
         self._plugin = plugin
         self._cache = plugin.get_storage('helpers', TTL=5)
+        self._api_cache = Helpers.Cache(plugin)
         self._api = self._get_api()
 
     def get_artist_item(self, artist, in_library=False):
@@ -216,10 +220,13 @@ class Helpers:
         playlists = self._api.library.playlists()
         self._cache['playlists'] = playlists
 
+    def cleanup(self):
+        self._api_cache.cleanup()
+
     def _get_api(self):
         api_key = self._plugin.get_setting('api_key', converter=unicode)
         api_secret = self._plugin.get_setting('api_secret', converter=unicode)
-        rhapsody = API(api_key, api_secret, cache_instance=Helpers.Cache(self._plugin))
+        rhapsody = API(api_key, api_secret, cache_instance=self._api_cache)
 
         try:
             username = self._plugin.get_setting('username', converter=unicode)

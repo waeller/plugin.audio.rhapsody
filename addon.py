@@ -645,6 +645,9 @@ if __name__ == '__main__':
         plugin.notify(e)
         exit(1)
 
-    plugin.log.info(sys.stdout.getvalue())
-    plugin.finish()
+    stdout = sys.stdout.getvalue()
+    if len(stdout):
+        plugin.log.info(stdout)
+
+    helpers.cleanup()
     exit(0)
