@@ -183,8 +183,10 @@ class Helpers:
         else:
             playlists = self._cache.get('playlists', None)
             if playlists is None:
-                playlists = self._api.library.playlists()
+                playlists = [x.__dict__ for x in self._api.library.playlists()]
                 self._cache['playlists'] = playlists
+            print playlists
+            playlists = [self._api.playlists.List(x) for x in playlists]
             for playlist in playlists:
                 item['context_menu'].append((
                     self._plugin.get_string(30253).format(playlist.name),
