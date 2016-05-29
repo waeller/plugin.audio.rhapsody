@@ -185,7 +185,6 @@ class Helpers:
             if playlists is None:
                 playlists = [x.__dict__ for x in self._api.library.playlists()]
                 self._cache['playlists'] = playlists
-            print playlists
             playlists = [self._api.playlists.List(x) for x in playlists]
             for playlist in playlists:
                 item['context_menu'].append((

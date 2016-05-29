@@ -602,24 +602,21 @@ def play(track_id):
 
 
 if __name__ == '__main__':
+    sys.stdout = StringIO()
     sys.path.append(os.path.join(plugin.addon.getAddonInfo('path'), 'resources', 'lib'))
 
     _ = plugin.get_string
     cache = plugin.get_storage('data', TTL=0)
 
-    from helpers import Helpers
-    from rhapsody import exceptions
+    import requests
+    requests.packages.urllib3.disable_warnings()
 
+    from helpers import Helpers
     helpers = Helpers(plugin)
+
+    from rhapsody import exceptions
     rhapsody = helpers.get_api()
     rhapsody.DEBUG = plugin.get_setting('api_debug', converter=bool)
-
-    if rhapsody.DEBUG:
-        import requests
-
-        requests.packages.urllib3.disable_warnings()
-
-    sys.stdout = StringIO()
 
     try:
         plugin.run()
@@ -645,9 +642,8 @@ if __name__ == '__main__':
         plugin.notify(e)
         exit(1)
 
+    helpers.cleanup()
+
     stdout = sys.stdout.getvalue()
     if len(stdout):
         plugin.log.info(stdout)
-
-    helpers.cleanup()
-    exit(0)
