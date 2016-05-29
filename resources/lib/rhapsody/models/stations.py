@@ -29,6 +29,8 @@ class Detail(Base):
 
 
 class Stations(MetadataList, MetadataDetail):
+    cache_timeout = None
+
     class Station(object):
         class Parameters(object):
             def __init__(self, data):
