@@ -18,28 +18,28 @@ class Library(object):
     def artists(self, limit=None, offset=None):
         from rhapsody.models import artists
 
-        return self._api.get_list(artists.List, 'me/library/artists', limit, offset, cache_timeout=None)
+        return self._api.get_list(artists.Artists.List, 'me/library/artists', limit, offset, cache_timeout=None)
 
     def albums(self, limit=None, offset=None):
         from rhapsody.models import albums
 
-        return self._api.get_list(albums.List, 'me/library/albums', limit, offset, cache_timeout=None)
+        return self._api.get_list(albums.Albums.List, 'me/library/albums', limit, offset, cache_timeout=None)
 
     def tracks(self, limit=None, offset=None):
         from rhapsody.models import tracks
 
-        return self._api.get_list(tracks.List, 'me/library/tracks', limit, offset, cache_timeout=None)
+        return self._api.get_list(tracks.Tracks.List, 'me/library/tracks', limit, offset, cache_timeout=None)
 
     def artist_albums(self, artist_id, limit=None, offset=None):
         from rhapsody.models import albums
 
-        return self._api.get_list(albums.List, 'me/library/artists/' + artist_id + '/albums', limit, offset,
+        return self._api.get_list(albums.Albums.List, 'me/library/artists/' + artist_id + '/albums', limit, offset,
                                   cache_timeout=None)
 
     def artist_tracks(self, artist_id, limit=None, offset=None):
         from rhapsody.models import tracks
 
-        return self._api.get_list(tracks.List, 'me/library/artists/' + artist_id + '/tracks', limit, offset,
+        return self._api.get_list(tracks.Tracks.List, 'me/library/artists/' + artist_id + '/tracks', limit, offset,
                                   cache_timeout=None)
 
     def album_tracks(self, album_id):
@@ -54,12 +54,12 @@ class Library(object):
     def recent_artists(self, limit=None, offset=None):
         from rhapsody.models import artists
 
-        return self._api.get_list(artists.List, 'me/recent/artists', limit, offset, cache_timeout=None)
+        return self._api.get_list(artists.Artists.List, 'me/recent/artists', limit, offset, cache_timeout=None)
 
     def recent_tracks(self, limit=None, offset=None):
         from rhapsody.models import tracks
 
-        return self._api.get_list(tracks.List, 'me/listens', limit, offset, cache_timeout=None)
+        return self._api.get_list(tracks.Tracks.List, 'me/listens', limit, offset, cache_timeout=None)
 
     def most_played_artists(self, range_choice=MOST_PLAYED_WEEK, limit=None, offset=None):
         return self._api.get_list(
@@ -100,17 +100,17 @@ class Library(object):
     def playlists(self, limit=100, offset=0):
         from rhapsody.models import playlists
 
-        return self._api.get_list(playlists.List, 'me/playlists', limit, offset, cache_timeout=None)
+        return self._api.get_list(playlists.Playlists.List, 'me/playlists', limit, offset, cache_timeout=None)
 
     def playlist(self, playlist_id):
         from rhapsody.models import playlists
 
-        return self._api.get_detail(playlists.Detail, 'me/playlists', playlist_id, cache_timeout=None)
+        return self._api.get_detail(playlists.Playlists.Detail, 'me/playlists', playlist_id, cache_timeout=None)
 
     def favorites(self, limit=None, offset=None):
         from rhapsody.models import tracks
 
-        return self._api.get_list(tracks.Detail, 'me/favorites', limit, offset, cache_timeout=None)
+        return self._api.get_list(tracks.Tracks.Detail, 'me/favorites', limit, offset, cache_timeout=None)
 
     def add_artist(self, artist_id):
         for album in self._api.artists.albums(artist_id):

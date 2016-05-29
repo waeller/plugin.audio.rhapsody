@@ -5,15 +5,15 @@ class Search(object):
                 if data['id'].startswith('Art.'):
                     from rhapsody.models import artists
                     self.type = 'artist'
-                    self.data = artists.List(data)
+                    self.data = artists.Artists.List(data)
                 if data['id'].startswith('Alb.'):
                     from rhapsody.models import albums
                     self.type = 'album'
-                    self.data = albums.List(data)
+                    self.data = albums.Albums.List(data)
                 if data['id'].startswith('Tra.'):
                     from rhapsody.models import tracks
                     self.type = 'track'
-                    self.data = tracks.List(data)
+                    self.data = tracks.Tracks.List(data)
             else:
                 self.type = 'unknown'
                 self.data = None

@@ -13,7 +13,7 @@ from rhapsody.models.genres import Genres
 from rhapsody.models.library import Library
 from rhapsody.models.playlists import Playlists
 from rhapsody.models.search import Search
-from rhapsody.models.stations import Stations
+from rhapsody.models.stations import Stations, StationsTracks
 from rhapsody.models.streams import Streams
 from rhapsody.models.tracks import Tracks
 from rhapsody.token import Token
@@ -46,6 +46,7 @@ class API:
         self.playlists = Playlists(self)
         self.search = Search(self)
         self.stations = Stations(self)
+        self.stations_tracks = StationsTracks(self)
         self.streams = Streams(self)
         self.tracks = Tracks(self)
 

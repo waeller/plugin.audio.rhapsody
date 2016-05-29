@@ -1,24 +1,21 @@
 from metadata import *
 
 
-class Base(object):
-    def __init__(self, data):
-        self.id = data['id']
-        self.name = data['name']
-
-
-class List(Base):
-    def __init__(self, data):
-        super(List, self).__init__(data)
-        self.subgenres = [List(x) for x in data.get('subgenres', [])]
-
-
-class Detail(Base):
-    def __init__(self, data):
-        super(Detail, self).__init__(data)
-
-
 class Genres(MetadataList, MetadataDetail):
+    class Base(object):
+        def __init__(self, data):
+            self.id = data['id']
+            self.name = data['name']
+
+    class List(Base):
+        def __init__(self, data):
+            super(Genres.List, self).__init__(data)
+            self.subgenres = [Genres.List(x) for x in data.get('subgenres', [])]
+
+    class Detail(Base):
+        def __init__(self, data):
+            super(Genres.Detail, self).__init__(data)
+
     url_base = 'genres'
     list_class = List
     detail_class = Detail
@@ -35,20 +32,20 @@ class Genres(MetadataList, MetadataDetail):
 
     def top_artists(self, genre_id):
         from rhapsody.models import artists
-        return self.list(genre_id + '/artists/top', artists.List)
+        return self.list(genre_id + '/artists/top', artists.Artists.List)
 
     def top_albums(self, genre_id):
         from rhapsody.models import albums
-        return self.list(genre_id + '/albums/top', albums.List)
+        return self.list(genre_id + '/albums/top', albums.Albums.List)
 
     def top_tracks(self, genre_id):
         from rhapsody.models import tracks
-        return self.list(genre_id + '/tracks/top', tracks.List)
+        return self.list(genre_id + '/tracks/top', tracks.Tracks.List)
 
     def new_albums(self, genre_id):
         from rhapsody.models import albums
-        return self.list(genre_id + '/albums/new', albums.List)
+        return self.list(genre_id + '/albums/new', albums.Albums.List)
 
     def stations(self, genre_id):
         from rhapsody.models import stations
-        return self.list(genre_id + '/stations', stations.List)
+        return self.list(genre_id + '/stations', stations.Stations.List)
