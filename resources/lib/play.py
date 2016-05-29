@@ -1,5 +1,6 @@
 import datetime
 
+from datetime import timedelta
 from xbmcswift2 import xbmc
 
 
@@ -21,8 +22,10 @@ class Notify(object):
     def playback_stopped(self):
         if self.playback_started_time is not None and self.playback_stopped_time is None:
             self.playback_stopped_time = datetime.datetime.utcnow()
-            self.rhapsody.events.log_playstart(self.track.id, self.stream)
-            self.rhapsody.events.log_playstop(self.track.id, self.stream, self.playback_started_time)
+            min_playback_stopped_time = self.playback_started_time + timedelta(seconds=int(self.track.duration * 0.8))
+            if self.playback_stopped_time > min_playback_stopped_time:
+                self.rhapsody.events.log_playstart(self.track.id, self.stream)
+                self.rhapsody.events.log_playstop(self.track.id, self.stream, self.playback_started_time)
 
     def is_playback_completed(self):
         return self.playback_started_time is not None and self.playback_stopped_time is not None
