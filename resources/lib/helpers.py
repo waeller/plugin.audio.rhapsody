@@ -1,6 +1,5 @@
 from xbmcswift2 import actions
 
-from rhapsody import exceptions
 from rhapsody.api import API
 from rhapsody.cache import Base as BaseCache
 from rhapsody.models.common import Image
@@ -32,7 +31,7 @@ class Helpers:
     def __init__(self, plugin):
         self._plugin = plugin
         self._cache = Helpers.Cache(plugin)
-        self._api = self._get_api()
+        self._api = None
 
     def get_artist_item(self, artist, in_library=False):
         item = {
@@ -219,16 +218,13 @@ class Helpers:
         api_secret = self._plugin.get_setting('api_secret', converter=unicode)
         rhapsody = API(api_key, api_secret, cache_instance=self._cache)
 
-        try:
-            username = self._plugin.get_setting('username', converter=unicode)
-            password = self._plugin.get_setting('password', converter=unicode)
-            rhapsody.login(username, password)
-        except exceptions.AuthenticationError:
-            self._plugin.notify(self._plugin.get_string(30100).encode('utf-8'))
-            self._plugin.open_settings()
-            exit()
+        username = self._plugin.get_setting('username', converter=unicode)
+        password = self._plugin.get_setting('password', converter=unicode)
+        rhapsody.login(username, password)
 
         return rhapsody
 
     def get_api(self):
+        if self._api is None:
+            self._api = self._get_api()
         return self._api

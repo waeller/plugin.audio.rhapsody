@@ -614,45 +614,46 @@ if __name__ == '__main__':
     cache = plugin.get_storage('data', TTL=0)
 
     import requests
+
     requests.packages.urllib3.disable_warnings()
 
     from helpers import Helpers
+
     helpers = Helpers(plugin)
 
-    from rhapsody import exceptions
-    rhapsody = helpers.get_api()
-    rhapsody.ENABLE_DEBUG = plugin.get_setting('api_debug', converter=bool)
-    rhapsody.ENABLE_CACHE = not plugin.get_setting('api_cache_disable', converter=bool)
-    if not rhapsody.ENABLE_DEBUG and not rhapsody.ENABLE_CACHE:
-        rhapsody.ENABLE_CACHE = True
-        plugin.set_setting('api_cache_disable', '0')
-
     try:
+        from rhapsody import exceptions
+
+        rhapsody = helpers.get_api()
+        rhapsody.ENABLE_DEBUG = plugin.get_setting('api_debug', converter=bool)
+        rhapsody.ENABLE_CACHE = not plugin.get_setting('api_cache_disable', converter=bool)
+        if not rhapsody.ENABLE_DEBUG and not rhapsody.ENABLE_CACHE:
+            rhapsody.ENABLE_CACHE = True
+            plugin.set_setting('api_cache_disable', '0')
+
         plugin.run()
+    except exceptions.AuthenticationError:
+        plugin.notify(_(30100).encode('utf-8'))
+        plugin.open_settings()
     except exceptions.RequestError:
         plugin.notify(_(30103).encode('utf-8'))
         plugin.log.error(sys.stdout.getvalue())
-        exit(1)
     except exceptions.ResourceNotFoundError:
         plugin.notify(_(30104).encode('utf-8'))
         plugin.log.error(sys.stdout.getvalue())
-        exit(1)
     except exceptions.ResponseError:
         plugin.notify(_(30105).encode('utf-8'))
         plugin.log.error(sys.stdout.getvalue())
-        exit(1)
     except exceptions.StreamingRightsError:
         plugin.notify(_(30106).encode('utf-8'))
         plugin.log.error(sys.stdout.getvalue())
-        exit(1)
     except Exception as e:
         plugin.log.error(sys.stdout.getvalue())
         traceback.print_exc()
         plugin.notify(e)
-        exit(1)
+    finally:
+        helpers.cleanup()
 
-    helpers.cleanup()
-
-    stdout = sys.stdout.getvalue()
-    if len(stdout):
-        plugin.log.info(stdout)
+        stdout = sys.stdout.getvalue()
+        if len(stdout):
+            plugin.log.info(stdout)
