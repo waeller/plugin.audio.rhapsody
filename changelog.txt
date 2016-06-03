@@ -1,3 +1,13 @@
+v2.0.0-rc.1
+- Added Android and Android TV compatibility
+- Added artist/genre/top radio stations
+- Added artist/album/station/playlist thumbnails and fanart
+- Added folders for Singles/EPs and Compilations
+- Added user listening history and charts
+- Added default API consumer key and secret, no developer account needed anymore
+- Improved playback notification for listening history
+- Several stability and performance fixes
+
 v1.0.0
 - Stable release
 

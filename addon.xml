@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.audio.rhapsody" name="Rhapsody" version="1.1.2" provider-name="pogowurst">
+<addon id="plugin.audio.rhapsody" name="Rhapsody" version="2.0.0-rc.1" provider-name="pogowurst">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.module.xbmcswift2" version="2.4.0" />
-        <import addon="script.module.requests" version="2.4.3" />
+        <import addon="script.module.xbmcswift2" version="2.4.0"/>
+        <import addon="script.module.requests" version="2.4.3"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="addon.py">
         <provides>audio</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">Plugin for Rhapsody/Napster/MTV-Music</summary>
+        <summary lang="en">Plugin for Rhapsody and Napster</summary>
         <description lang="en">
-
+            Features
+            --------
+            * My Music: Artists, Albums, Tracks, Favorites, Playlists
+            * Radio stations and artist radios
+            * Manage playlists
+            * Search
+            * Top artists, albums, tracks, genres, new releases
+            * Staff picks, recommendations, playlists
+            * Listening history, user charts
         </description>
-        <summary lang="de">Plugin für Rhapsody/Napster/MTV-Music</summary>
+        <summary lang="de">Plugin für Rhapsody and Napster</summary>
         <description lang="de">
-
+            Features
+            --------
+            * Meine Musik: Künstler, Alben, Titel, Favoriten, Wiedergabelisten
+            * Radiostationen und Künstlerradios
+            * Playlists erstellen, umbennen und löschen
+            * Volltextsuche
+            * Entdecken / Top Künstler, Alben, Titel / Genres / Neuerscheinungen / etc.
+            * Staff Picks / Empfehlungen / Playlists
+            * Historie /Zuletzt gehört / Meist gehört / abgespielte Titel werden an Rhapsody gesenden
         </description>
         <disclaimer/>
         <language>en de</language>
