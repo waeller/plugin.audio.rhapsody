@@ -248,7 +248,7 @@ msgid "Subgenres"
 msgstr ""
 
 msgctxt "#30266"
-msgid "Top Stations"
+msgid "Stations"
 msgstr ""
 
 msgctxt "#30267"

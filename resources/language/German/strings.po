@@ -248,8 +248,8 @@ msgid "Subgenres"
 msgstr "Untergenres"
 
 msgctxt "#30266"
-msgid "Top Stations"
-msgstr "Top Radiostationen"
+msgid "Stations"
+msgstr "Radiostationen"
 
 msgctxt "#30267"
 msgid "Stations by decade"
