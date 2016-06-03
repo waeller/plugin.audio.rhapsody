@@ -22,7 +22,7 @@ Features
 Recommended Setup (auto-update)
 -------------------------------
 * Get the repository including the current version here:
-  https://github.com/pogowurst/repository.pogowurst.addons
+  https://raw.github.com/pogowurst/repository.pogowurst.addons/master/repository.pogowurst.addons/repository.pogowurst.addons-1.0.0.zip
 * Install the repository with the add zip file option inside add-on settings
 * Install "Rhapsody" from "Pogowurst Add-on Repository"
 
