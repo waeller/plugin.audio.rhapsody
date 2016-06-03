@@ -1,15 +1,33 @@
 plugin.audio.rhapsody
 =====================
 
-Rhapsody plugin for Kodi
+Rhapsody and Napster plugin for Kodi
 
 Requirements
 ------------
-* XBMC/Kodi
-* A free Rhapsody developer account. Create it at https://developer.rhapsody.com/signin and start a new app to receive your Consumer Key and Consumer Secret
+* Kodi v16 (Jarvis)
 
-Setup
------
+
+Features
+-------- 
+* My Music: Artists, Albums, Tracks, Favorites, Playlists
+* Radio stations and artist radios
+* Manage playlists
+* Search
+* Top artists, albums, tracks, genres, new releases
+* Staff picks, recommendations, playlists
+* Listening history, user charts
+
+
+Recommended Setup (auto-update)
+-------------------------------
+* Get the repository including the current version here:
+  https://github.com/pogowurst/repository.pogowurst.addons
+* Install the repository with the add zip file option inside add-on settings
+* Install "Rhapsody" from "Pogowurst Add-on Repository"
+
+
+Manual Setup
+------------
 * Download the current release as a zip file
-* In Kodi install the addon with the add zip file option inside addon settings
-* Update your Consumer Key, Consumer Secret and your user credentials in the addon settings
+* Install the add-on with the add zip file option inside add-on settings
