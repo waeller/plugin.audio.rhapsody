@@ -1,3 +1,6 @@
+v2.0.0
+- Stable release
+
 v2.0.0-rc.1
 - Added Android and Android TV compatibility
 - Added artist/genre/top radio stations
