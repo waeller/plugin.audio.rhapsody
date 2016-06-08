@@ -252,8 +252,8 @@ msgid "Stations"
 msgstr "Radiostationen"
 
 msgctxt "#30267"
-msgid "Stations by decade"
-msgstr "Radiostationen nach Jahrzehnt"
+msgid "Decades"
+msgstr "Jahrzehnte"
 
 msgctxt "#30268"
 msgid "Play [B]{0:s}[/B]"

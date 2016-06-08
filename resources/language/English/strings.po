@@ -252,7 +252,7 @@ msgid "Stations"
 msgstr ""
 
 msgctxt "#30267"
-msgid "Stations by decade"
+msgid "Decades"
 msgstr ""
 
 msgctxt "#30268"

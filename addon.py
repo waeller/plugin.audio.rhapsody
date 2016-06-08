@@ -38,7 +38,6 @@ def discover():
         {'label': _(30263), 'path': plugin.url_for('albums_picks')},
         {'label': _(30264), 'path': plugin.url_for('playlists_featured')},
         {'label': _(30266), 'path': plugin.url_for('stations_top')},
-        {'label': _(30267), 'path': plugin.url_for('stations_decade')},
     ]
 
 
@@ -388,7 +387,10 @@ def playlists_detail(playlist_id):
 
 @plugin.route('/stations/top')
 def stations_top():
-    return helpers.get_station_items(rhapsody.stations.top())
+    items = [
+        {'label': _(30267), 'path': plugin.url_for('stations_decade')}
+    ] + list(helpers.get_station_items(rhapsody.stations.top()))
+    return items
 
 
 @plugin.route('/stations/decade')
