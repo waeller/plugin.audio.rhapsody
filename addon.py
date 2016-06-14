@@ -438,10 +438,11 @@ def stations_play(station_id):
 
     play(track_id=current_track_id)
 
-    if next_track_id is not None:
-        plugin.log.info('Preload: Caching next playlist position {0:d} ({1:s})'.format(next_pos, next_track_id))
-        rhapsody.tracks.detail(next_track_id)
-        rhapsody.streams.detail(next_track_id)
+    if rhapsody.ENABLE_CACHE:
+        if next_track_id is not None:
+            plugin.log.info('Preload: Caching next playlist position {0:d} ({1:s})'.format(next_pos, next_track_id))
+            rhapsody.tracks.detail(next_track_id)
+            rhapsody.streams.detail(next_track_id)
 
     return plugin.finish()
 
