@@ -426,7 +426,7 @@ def stations_play(station_id):
     next_pos = playlist.getposition() + 1
     next_track_id = None
     if next_pos >= playlist.size():
-        for next_track in rhapsody.stations.tracks(station_id).tracks[:1]:
+        for next_track in rhapsody.stations.tracks(station_id).tracks[:5]:
             next_track_id = next_track.id
             next_item = helpers.get_track_item(next_track)
             next_item['path'] = plugin.url_for(
