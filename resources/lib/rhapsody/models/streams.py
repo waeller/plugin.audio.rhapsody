@@ -12,7 +12,7 @@ class Detail(object):
 class Streams(MetadataDetail):
     url_base = 'play'
     detail_class = Detail
-    cache_timeout = 300
+    cache_timeout = 600
 
     def detail(self, obj_id, **kwargs):
         if not self._api.is_authenticated():
