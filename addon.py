@@ -424,27 +424,17 @@ def stations_play(station_id):
         plugin.add_to_playlist([current_item], playlist='music')
 
     next_pos = playlist.getposition() + 1
-    next_track_id = None
     if next_pos >= playlist.size():
         for next_track in rhapsody.stations.tracks(station_id).tracks[:5]:
-            next_track_id = next_track.id
             next_item = helpers.get_track_item(next_track)
             next_item['path'] = plugin.url_for(
                 'stations_play',
                 station_id=station_id,
-                current_track_id=next_track_id
+                current_track_id=next_track.id
             )
             plugin.add_to_playlist([next_item], playlist='music')
 
-    play(track_id=current_track_id)
-
-    if rhapsody.ENABLE_CACHE:
-        if next_track_id is not None:
-            plugin.log.info('Preload: Caching next playlist position {0:d} ({1:s})'.format(next_pos, next_track_id))
-            rhapsody.tracks.detail(next_track_id)
-            rhapsody.streams.detail(next_track_id)
-
-    return plugin.finish()
+    return play(track_id=current_track_id)
 
 
 @plugin.route('/albums/top')
@@ -610,6 +600,7 @@ def tracks_library_remove(track_id):
 
 @plugin.route('/play/<track_id>')
 def play(track_id):
+    import re
     import play
     import xbmc
 
@@ -626,13 +617,21 @@ def play(track_id):
     # query the next playlist item so it'll be added to the cache for seamless playback
     if rhapsody.ENABLE_CACHE:
         playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
-        play_url = plugin.url_for('play', track_id='')
         next_pos = playlist.getposition() + 1
         if next_pos >= playlist.size():
             next_pos = 0
         next_url = playlist[next_pos].getfilename()
-        if next_url.startswith(play_url):
-            next_track_id = next_url.replace(play_url, '')
+        next_track_id = None
+        if 'plugin.audio.rhapsody' in next_url:
+            # handle play urls
+            play_url = plugin.url_for('play', track_id='')
+            if next_url.startswith(play_url):
+                next_track_id = next_url.replace(play_url, '')
+            # handle station urls
+            station_split = next_url.split('?current_track_id=')
+            if len(station_split) == 2:
+                next_track_id = station_split[1]
+        if next_track_id is not None:
             plugin.log.info('Preload: Caching next playlist position {0:d} ({1:s})'.format(next_pos, next_track_id))
             rhapsody.tracks.detail(next_track_id)
             rhapsody.streams.detail(next_track_id)
