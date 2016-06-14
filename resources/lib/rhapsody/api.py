@@ -134,8 +134,12 @@ class API:
         try:
             response = requests.get(API.BASE_URL + API.VERSION + '/' + url, params=params, headers=headers)
             self._log_response(response)
-            if response.status_code == 404:
-                raise exceptions.ResourceNotFoundError
+            if response.status_code in [400, 401, 403, 405, 409, 429]:
+                raise exceptions.RequestError(response.status_code)
+            if response.status_code in [404]:
+                raise exceptions.ResourceNotFoundError(response.status_code)
+            if response.status_code in [500]:
+                raise exceptions.ResponseError(response.status_code)
             return response.text
         except ConnectionError:
             if retry < self.MAX_RETRIES:
