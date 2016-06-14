@@ -411,20 +411,39 @@ def stations_detail(station_id):
 
 @plugin.route('/stations/<station_id>/play')
 def stations_play(station_id):
+    import xbmc
+
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
+
     current_track_id = plugin.request.args.get('current_track_id', [None])[0]
     if current_track_id is None:
+        playlist.clear()
         current_track_id = rhapsody.stations.tracks(station_id).tracks[0].id
+        current_track = rhapsody.tracks.detail(current_track_id)
+        current_item = helpers.get_track_item(current_track)
+        plugin.add_to_playlist([current_item], playlist='music')
 
-    for next_track in rhapsody.stations.tracks(station_id).tracks:
-        next_item = helpers.get_track_item(next_track)
-        next_item['path'] = plugin.url_for(
-            'stations_play',
-            station_id=station_id,
-            current_track_id=next_track.id
-        )
-        plugin.add_to_playlist([next_item], playlist='music')
+    next_pos = playlist.getposition() + 1
+    next_track_id = None
+    if next_pos >= playlist.size():
+        for next_track in rhapsody.stations.tracks(station_id).tracks[:1]:
+            next_track_id = next_track.id
+            next_item = helpers.get_track_item(next_track)
+            next_item['path'] = plugin.url_for(
+                'stations_play',
+                station_id=station_id,
+                current_track_id=next_track_id
+            )
+            plugin.add_to_playlist([next_item], playlist='music')
 
     play(track_id=current_track_id)
+
+    if next_track_id is not None:
+        plugin.log.info('Preload: Caching next playlist position {0:d} ({1:s})'.format(next_pos, next_track_id))
+        rhapsody.tracks.detail(next_track_id)
+        rhapsody.streams.detail(next_track_id)
+
+    return plugin.finish()
 
 
 @plugin.route('/albums/top')
@@ -590,22 +609,39 @@ def tracks_library_remove(track_id):
 
 @plugin.route('/play/<track_id>')
 def play(track_id):
+    import play
+    import xbmc
+
     track = rhapsody.tracks.detail(track_id)
     stream = rhapsody.streams.detail(track_id)
 
     item = helpers.get_track_item(track)
     item['path'] = stream.url
 
-    import play
     notify = play.Notify(rhapsody, track, stream)
     player = play.Player(plugin=plugin, notify=notify)
     plugin.set_resolved_url(item)
 
-    import xbmc
+    # query the next playlist item so it'll be added to the cache for seamless playback
+    if rhapsody.ENABLE_CACHE:
+        playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
+        play_url = plugin.url_for('play', track_id='')
+        next_pos = playlist.getposition() + 1
+        if next_pos >= playlist.size():
+            next_pos = 0
+        next_url = playlist[next_pos].getfilename()
+        if next_url.startswith(play_url):
+            next_track_id = next_url.replace(play_url, '')
+            plugin.log.info('Preload: Caching next playlist position {0:d} ({1:s})'.format(next_pos, next_track_id))
+            rhapsody.tracks.detail(next_track_id)
+            rhapsody.streams.detail(next_track_id)
+
+    # wait for the current item to finish before exiting
     while not xbmc.abortRequested and not player.has_stopped:
         xbmc.sleep(10)
 
     plugin.log.info('Player: Exited')
+    return plugin.finish()
 
 
 if __name__ == '__main__':

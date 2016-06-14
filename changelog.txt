@@ -1,3 +1,6 @@
+v2.1.0
+- Added track precaching for seamless playback
+
 v2.0.0
 - Stable release
 
