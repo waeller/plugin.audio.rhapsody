@@ -621,16 +621,27 @@ def play(track_id):
         if next_pos >= playlist.size():
             next_pos = 0
         next_url = playlist[next_pos].getfilename()
+
         next_track_id = None
-        if 'plugin.audio.rhapsody' in next_url:
-            # handle play urls
-            play_url = plugin.url_for('play', track_id='')
-            if next_url.startswith(play_url):
-                next_track_id = next_url.replace(play_url, '')
-            # handle station urls
-            station_split = next_url.split('?current_track_id=')
-            if len(station_split) == 2:
-                next_track_id = station_split[1]
+        url_patterns = [
+            re.escape(
+                plugin.url_for('play', track_id='-track_id-')
+            ).replace(
+                re.escape('-track_id-'), '(?P<track_id>[^\/]+)'
+            ),
+            re.escape(
+                plugin.url_for('stations_play', station_id='-station_id-', current_track_id='-track_id-')
+            ).replace(
+                re.escape('-station_id-'), '(?P<station_id>[^\/]+)'
+            ).replace(
+                re.escape('-track_id-'), '(?P<track_id>.+)'
+            )
+        ]
+        for url_pattern in url_patterns:
+            match = re.match(url_pattern, next_url)
+            if match is not None:
+                next_track_id = match.group('track_id')
+
         if next_track_id is not None:
             plugin.log.info('Preload: Caching next playlist position {0:d} ({1:s})'.format(next_pos, next_track_id))
             rhapsody.tracks.detail(next_track_id)
