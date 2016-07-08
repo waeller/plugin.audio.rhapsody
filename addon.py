@@ -213,8 +213,10 @@ def artists_library_albums(artist_id):
     try:
         album_type = int(plugin.request.args['album_type'][0])
     except (KeyError, ValueError):
-        station = rhapsody.stations.detail(rhapsody.artists.get_station_id(artist_id))
-        items.append(helpers.get_station_item(station, label=u'[B]{0:s}[/B]'.format(_(30244))))
+        items.append({
+            'label': u'[B]{0:s}[/B]'.format(_(30255)),
+            'path': plugin.url_for('artists_detail', artist_id=artist_id)
+        })
 
         album_type = rhapsody.albums.TYPE_MAIN_RELEASE
         items.append({
@@ -267,6 +269,10 @@ def artists_detail(artist_id):
     except (KeyError, ValueError):
         station = rhapsody.stations.detail(rhapsody.artists.get_station_id(artist_id))
         items.append(helpers.get_station_item(station, label=u'[B]{0:s}[/B]'.format(_(30244))))
+        items.append({
+            'label': u'[B]{0:s}[/B]'.format(_(30256)),
+            'path': plugin.url_for('artists_similar', artist_id=artist_id)
+        })
 
         album_type = rhapsody.albums.TYPE_MAIN_RELEASE
         items.append({

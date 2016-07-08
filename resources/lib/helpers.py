@@ -43,10 +43,6 @@ class Helpers:
             'context_menu': [],
         }
 
-        item['context_menu'].append((
-            self._plugin.get_string(30256),
-            actions.update_view(self._plugin.url_for('artists_similar', artist_id=artist.id))))
-
         if in_library:
             item['path'] = self._plugin.url_for('artists_library_albums', artist_id=artist.id)
             item['context_menu'].append((
@@ -72,10 +68,7 @@ class Helpers:
             },
             'context_menu': []
         }
-        item['context_menu'].append((
-            self._plugin.get_string(30255).format(album.artist.name),
-            actions.update_view(self._plugin.url_for('artists_detail', artist_id=album.artist.id))
-        ))
+
         if in_library:
             item['path'] = self._plugin.url_for('albums_library_tracks', album_id=album.id)
             if library_artist_id is None:

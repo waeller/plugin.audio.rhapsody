@@ -216,8 +216,8 @@ msgid "Remove from playlist"
 msgstr "Aus Wiedergabelisten entfernen"
 
 msgctxt "#30255"
-msgid "More from {0:s}"
-msgstr "Mehr von {0:s}"
+msgid "More from this artist"
+msgstr "Mehr von diesem Künstler"
 
 msgctxt "#30256"
 msgid "Similar artists"

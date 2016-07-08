@@ -216,7 +216,7 @@ msgid "Remove from playlist"
 msgstr ""
 
 msgctxt "#30255"
-msgid "More from {0:s}"
+msgid "More from this artist"
 msgstr ""
 
 msgctxt "#30256"
