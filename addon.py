@@ -419,28 +419,15 @@ def stations_detail(station_id):
 def stations_play(station_id):
     import xbmc
 
-    playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
-
     current_track_id = plugin.request.args.get('current_track_id', [None])[0]
     if current_track_id is None:
-        playlist.clear()
+        xbmc.PlayList(xbmc.PLAYLIST_MUSIC).clear()
         current_track_id = rhapsody.stations.tracks(station_id).tracks[0].id
         current_track = rhapsody.tracks.detail(current_track_id)
         current_item = helpers.get_track_item(current_track)
         plugin.add_to_playlist([current_item], playlist='music')
 
-    next_pos = playlist.getposition() + 1
-    if next_pos >= playlist.size():
-        for next_track in rhapsody.stations.tracks(station_id).tracks[:5]:
-            next_item = helpers.get_track_item(next_track)
-            next_item['path'] = plugin.url_for(
-                'stations_play',
-                station_id=station_id,
-                current_track_id=next_track.id
-            )
-            plugin.add_to_playlist([next_item], playlist='music')
-
-    return play(track_id=current_track_id)
+    return play(track_id=current_track_id, station_id=station_id)
 
 
 @plugin.route('/albums/top')
@@ -605,7 +592,7 @@ def tracks_library_remove(track_id):
 
 
 @plugin.route('/play/<track_id>')
-def play(track_id):
+def play(track_id, station_id=None):
     import re
     import play
     import xbmc
@@ -619,6 +606,27 @@ def play(track_id):
     notify = play.Notify(rhapsody, track, stream)
     player = play.Player(plugin=plugin, notify=notify)
     plugin.set_resolved_url(item)
+
+    # add upcoming station tracks to playlist
+    if station_id is not None:
+        playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
+        current_pos = playlist.getposition()
+        playlist_target_size = current_pos + 5
+        while playlist.size() <= playlist_target_size:
+            next_tracks = rhapsody.stations.tracks(station_id).tracks[:5]
+            if len(next_tracks) == 0:
+                break
+            for next_track in next_tracks:
+                plugin.log.info('Preload: Adding next station track {0:d} of {1:d}'.format(
+                    playlist.size(), current_pos + 5
+                ))
+                next_item = helpers.get_track_item(next_track)
+                next_item['path'] = plugin.url_for(
+                    'stations_play',
+                    station_id=station_id,
+                    current_track_id=next_track.id
+                )
+                plugin.add_to_playlist([next_item], playlist='music')
 
     # query the next playlist item so it'll be added to the cache for seamless playback
     if rhapsody.ENABLE_CACHE:
