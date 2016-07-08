@@ -8,18 +8,22 @@ msgid "Advanced"
 msgstr ""
 
 msgctxt "#30001"
-msgid "API Consumer Key"
+msgid "Prefetch next track"
 msgstr ""
 
 msgctxt "#30002"
-msgid "API Consumer Secret"
+msgid "API Consumer Key"
 msgstr ""
 
 msgctxt "#30003"
-msgid "Debug mode"
+msgid "API Consumer Secret"
 msgstr ""
 
 msgctxt "#30004"
+msgid "Debug mode"
+msgstr ""
+
+msgctxt "#30005"
 msgid "Disable cache (not recommended)"
 msgstr ""
 

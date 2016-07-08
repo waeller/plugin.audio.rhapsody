@@ -629,7 +629,8 @@ def play(track_id, station_id=None):
                 plugin.add_to_playlist([next_item], playlist='music')
 
     # query the next playlist item so it'll be added to the cache for seamless playback
-    if rhapsody.ENABLE_CACHE:
+    prefetch_enabled = plugin.get_setting('prefetch', converter=bool)
+    if prefetch_enabled and rhapsody.ENABLE_CACHE:
         playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
         next_pos = playlist.getposition() + 1
         if next_pos >= playlist.size():
