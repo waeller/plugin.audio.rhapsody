@@ -1,3 +1,9 @@
+v2.3.0
+- Added streaming via RTMP
+
+v2.2.0
+- Added station precaching for seamless playback
+
 v2.1.0
 - Added track precaching for seamless playback
 
