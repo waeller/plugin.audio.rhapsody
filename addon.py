@@ -601,7 +601,15 @@ def play(track_id, station_id=None):
     stream = rhapsody.streams.detail(track_id)
 
     item = helpers.get_track_item(track)
-    item['path'] = stream.url
+    if stream.url.startswith('rtmp://'):
+        parts = [
+            '/'.join(stream.url.split('/')[:5]),
+            'app=' + '/'.join(stream.url.split('/')[3:5]),
+            'playpath=' + 'mp3:' + '/'.join(stream.url.split('/')[5:])
+        ]
+        item['path'] = ' '.join(parts)
+    else:
+        item['path'] = stream.url
 
     notify = play.Notify(rhapsody, track, stream)
     player = play.Player(plugin=plugin, notify=notify)
@@ -629,7 +637,7 @@ def play(track_id, station_id=None):
                 plugin.add_to_playlist([next_item], playlist='music')
 
     # query the next playlist item so it'll be added to the cache for seamless playback
-    prefetch_enabled = plugin.get_setting('prefetch', converter=bool)
+    prefetch_enabled = plugin.get_setting('api_prefetch', converter=bool)
     if prefetch_enabled and rhapsody.ENABLE_CACHE:
         playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
         next_pos = playlist.getposition() + 1
@@ -689,6 +697,7 @@ if __name__ == '__main__':
         from rhapsody import exceptions
 
         rhapsody = helpers.get_api()
+        rhapsody.ENABLE_RTMP = plugin.get_setting('api_transport', converter=str) == 'RTMP'
         rhapsody.ENABLE_DEBUG = plugin.get_setting('api_debug', converter=bool)
         rhapsody.ENABLE_CACHE = not plugin.get_setting('api_cache_disable', converter=bool)
         if not rhapsody.ENABLE_DEBUG and not rhapsody.ENABLE_CACHE:

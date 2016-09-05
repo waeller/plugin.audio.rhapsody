@@ -1,11 +1,12 @@
 import hashlib
 import json
+from datetime import datetime, timedelta
 
 import requests
 from requests.exceptions import ConnectionError
 
 from rhapsody import cache, exceptions
-from rhapsody.account import Account
+from rhapsody.account import Account, Session
 from rhapsody.models.albums import Albums
 from rhapsody.models.artists import Artists
 from rhapsody.models.events import Events
@@ -27,6 +28,7 @@ class API:
     MAX_RETRIES = 3
     ENABLE_CACHE = True
     ENABLE_DEBUG = False
+    ENABLE_RTMP = False
 
     instance = None
     token = Token
@@ -53,6 +55,7 @@ class API:
 
         self.token = self._cache.get('token', API.TOKEN_CACHE_LIFETIME)
         self.account = self._cache.get('account', API.TOKEN_CACHE_LIFETIME)
+        self.session = self._cache.get('session', API.TOKEN_CACHE_LIFETIME)
 
     def is_authenticated(self):
         try:
@@ -105,6 +108,38 @@ class API:
         self._log_response(response)
         self.token.update_token(json.loads(response.text))
         self._cache.set('token', self.token, API.TOKEN_CACHE_LIFETIME)
+
+    def refresh_session(self):
+        try:
+            response = requests.post(API.BASE_URL + 'v1/sessions', headers=self._get_headers())
+        except ConnectionError:
+            raise exceptions.RequestError
+        self._log_response(response)
+        try:
+            self.session = Session(json.loads(response.text))
+            self._cache.set('session', self.session, API.TOKEN_CACHE_LIFETIME)
+        except:
+            raise exceptions.ResponseError
+
+    def validate_session(self):
+        if self.session is not None:
+            if self.session.valid and self.session.created + timedelta(seconds=30) > datetime.now():
+                return self.session.valid
+            try:
+                response = requests.get(API.BASE_URL + 'v1/sessions/' + self.session.id, headers=self._get_headers())
+            except ConnectionError:
+                raise exceptions.RequestError
+            self._log_response(response)
+            try:
+                self.session = Session(json.loads(response.text))
+                self._cache.set('session', self.session, API.TOKEN_CACHE_LIFETIME)
+            except:
+                raise exceptions.ResponseError
+            if not self.session.valid:
+                self.refresh_session()
+        else:
+            self.refresh_session()
+        return self.session.valid
 
     def _get_headers(self, headers=None):
         if headers is None:

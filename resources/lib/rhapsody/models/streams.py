@@ -25,4 +25,13 @@ class Streams(MetadataDetail):
             raise exceptions.StreamingRightsError
         if not self._api.account.can_stream_on_web:
             raise exceptions.StreamingRightsError
-        return super(Streams, self).detail(obj_id)
+
+        if self._api.ENABLE_RTMP:
+            if not self._api.validate_session():
+                raise exceptions.StreamingRightsError
+            else:
+                return super(Streams, self).detail(obj_id + '?web=True&context=ON_DEMAND&sessionId={0:s}'.format(
+                    self._api.session.id
+                ))
+        else:
+            return super(Streams, self).detail(obj_id)

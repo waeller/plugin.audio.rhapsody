@@ -27,6 +27,10 @@ msgctxt "#30005"
 msgid "Disable cache (not recommended)"
 msgstr "Zwischenspeicher deaktivieren (nicht empfohlen)"
 
+msgctxt "#30006"
+msgid "Transport method"
+msgstr "Übertragungsmethode"
+
 msgctxt "#30010"
 msgid "Account"
 msgstr "Konto"

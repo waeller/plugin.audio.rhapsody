@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class Account(object):
     def __init__(self, data):
         self.can_upgrade_streams = data['canUpgradeStreams']
@@ -36,3 +39,11 @@ class Account(object):
         self.trial_length_days = data['trialLengthDays']
         self.country = data['country']
         self.logon = data['logon']
+
+
+class Session(object):
+    def __init__(self, data):
+        self.id = data['id']
+        self.valid = data['valid']
+        self.expired_by_client_type = data['expiredByClientType']
+        self.created = datetime.now()

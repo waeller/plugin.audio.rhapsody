@@ -24,6 +24,7 @@ class Helpers:
         def set(self, key, value, timeout):
             storage = self.get_storage(timeout)
             storage[key] = value
+            storage.close()
 
         def cleanup(self):
             del self._plugin
