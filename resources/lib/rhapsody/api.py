@@ -127,18 +127,18 @@ class API:
                 return self.session.valid
             try:
                 response = requests.get(API.BASE_URL + 'v1/sessions/' + self.session.id, headers=self._get_headers())
-            except ConnectionError:
-                raise exceptions.RequestError
-            self._log_response(response)
-            try:
+                self._log_response(response)
+
                 self.session = Session(json.loads(response.text))
                 self._cache.set('session', self.session, API.TOKEN_CACHE_LIFETIME)
-            except:
-                raise exceptions.ResponseError
-            if not self.session.valid:
+
+                if not self.session.valid:
+                    self.refresh_session()
+            except (ConnectionError, KeyError):
                 self.refresh_session()
         else:
             self.refresh_session()
+
         return self.session.valid
 
     def _get_headers(self, headers=None):

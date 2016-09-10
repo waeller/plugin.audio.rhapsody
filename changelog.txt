@@ -1,3 +1,6 @@
+v2.3.1
+- Fix error when validating playback session
+
 v2.3.0
 - Added streaming via RTMP
 
