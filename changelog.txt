@@ -1,3 +1,6 @@
+v2.3.2
+- Change default protocol to HTTP for Kodi 17 Beta compatibility
+
 v2.3.1
 - Fix error when validating playback session
 
