@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.audio.rhapsody" name="Rhapsody" version="2.3.2" provider-name="pogowurst">
+<addon id="plugin.audio.rhapsody" name="Rhapsody" version="2.3.3" provider-name="pogowurst,waeller">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.xbmcswift2" version="2.4.0"/>
@@ -13,13 +13,15 @@
         <description lang="en">Listen to over 35 million songs in the Rhapsody music catalog. Manage your music library and playlists in a comfortable way. Use top artists, albums and tracks or radio stations to discover something new. A Rhapsody subscription is required.</description>
         <summary lang="de">Rhapsody Musik Add-On</summary>
         <description lang="de">Höre mehr als 35 Millionen Songs aus dem Rhapsody Musikkatalog. Verwalte bequem deine Musikbibliothek und Wiedergabelisten. Verwende Top-Künstler, Alben und Titel oder Radiosender um etwas Neues zu entdecken. Eine kostenpflichtige Rhapsody-Mitgliedschaft wird benötigt.</description>
-        <disclaimer/>
+        <disclaimer>Created by pogowurst, modified by waeller</disclaimer>
+        <news>v2.3.3 (2018-11-18)
+        - Fix error accessing billing_partner_code in account data</news>
         <language>en de</language>
         <platform>all</platform>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <forum/>
         <website/>
         <email/>
-        <source>https://github.com/pogowurst/plugin.audio.rhapsody</source>
+        <source>https://github.com/waeller/plugin.audio.rhapsody</source>
     </extension>
 </addon>
